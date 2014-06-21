@@ -1,0 +1,22 @@
+doctype html
+html(lang="en")
+    head
+        // //
+        // Declare shared javascripts and css here:
+        // //
+        link(rel="stylesheet", href="/css/lib/bootstrap-3.1.1-customized.min.css")
+        link(rel="stylesheet", type="text/css", href="/css/screen.css")
+        link(rel="stylesheet", type="text/css", href="/css/share/main.css")
+        script(src="/javascript/lib/jquery-2.1.0.min.js")
+        script(src="/javascript/lib/bootstrap-3.1.1.min.js")
+        block header
+    body
+        include ../include/_navbar
+        div#wrap
+            div#container.container-fluid
+                block content
+            div#push
+        div#footer.container-full
+            block scripts
+            block footer
+            include ../include/_footer

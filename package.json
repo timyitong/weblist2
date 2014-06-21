@@ -1,0 +1,20 @@
+{
+  "name": "weblist2",
+  "description": "NodeJS version of weblist. Gangbadai!",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express"   :   "3.x",
+    "jade"      :   ">= 0.0.1",
+    "mongodb"   :   ">=0.9.6",
+    "mongoose"  :   ">=2.5.10",
+    "imagemagick":  ">=0.0.1",
+    "node-fs"        :   ">=0.1.7",
+    "path"      :   ">=0.0.1",
+    "bcrypt"    :   ">=0.0.1",
+    "moment"    : ">=1.7.0",
+    "everyauth" : ">=0.0.1",
+    "pusher"     : ">=0.0.1",
+    "redis"     : ">=0.0.1"
+  }
+}
