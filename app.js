@@ -7,7 +7,6 @@ app.application_root = __dirname;
 
 app.everyauth =  require('everyauth');
 
-app.bcrypt = require('bcrypt');
 app.im = require('imagemagick');
 app.fs = require('node-fs');
 app.path = require("path");
