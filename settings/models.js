@@ -6,6 +6,7 @@ function loadModel(app, modelName) {
 
 module.exports = function(app){
 
+    this.UserModel = loadModel(app, 'user');
     this.HouseModel = loadModel(app, 'house');
 
     return this;

@@ -7,6 +7,8 @@ function loadController(app, controllerName) {
 module.exports = function(app){
 
     loadController(app, 'application');
+
+    loadController(app, 'user');
     loadController(app, 'house');
 
     return this;
