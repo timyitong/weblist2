@@ -35,27 +35,32 @@ module.exports = function(app) {
     })
 
     app.post('/signup', function (req, res) {
-        var user = new models.UserModel({
-            email: req.body.email,
-            password: req.body.password,
-        });
-        if (models.UserModel.findOne({ email: req.body.email })) {
-            return res.render(
-                'user/signup.jade',        
-                { message: "Email address already used."}
-            );
-        }
-
-        user.save(function (err) {
-            if (!err) {
-                req.session.uid = user._id;
-                res.cookie('uid', user._id, {maxAge: 365 * 24 * 60 * 60 * 1000})
-
-                return res.redirect("/");
+        
+        return models.UserModel.findOne({ email: req.body.email }, function(err, user) {
+            if (err) {
+                return res.send('Login failed caused by database. ' + err);
+            }
+            if (user == undefined) {
+                var newUser = new models.UserModel({
+                    email: req.body.email,
+                    password: req.body.password,
+                });
+                newUser.save(function (err) {
+                    if (!err) {
+                        req.session.uid = newUser._id;
+                        res.cookie('uid', newUser._id, {maxAge: 365 * 24 * 60 * 60 * 1000})
+                        return res.redirect('/');
+                    } else {
+                        return res.render(
+                            'user/signup.jade',
+                            { message:  'An error occurred during signing up.'}
+                        );
+                    }
+                });              
             } else {
                 return res.render(
                     'user/signup.jade',
-                    { message:  "An error occurred during signing up."}
+                    { message: 'Email address already used. ' + req.body.email }
                 );
             }
         });
