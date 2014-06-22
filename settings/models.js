@@ -6,8 +6,9 @@ function loadModel(app, modelName) {
 
 module.exports = function(app){
 
-    this.UserModel = loadModel(app, 'user');
+    this.CredentialModel = loadModel(app, 'credential');
     this.HouseModel = loadModel(app, 'house');
+    this.UserModel = loadModel(app, 'user');
 
     return this;
 }

@@ -29,6 +29,19 @@ module.exports = function(app, express){
             uploadDir:  "./static/uploads"
         }));
 
+        app.use(function (req, res, next) {
+            if (req.cookies.uid != undefined && req.cookies.uid != 'undefined') {
+                req.session.uid = req.cookies.uid;
+            }
+            if (req.session.uid == undefined) {
+                req.session.authenticated = false;
+            } else {
+                req.session.authenticated = true;
+            }
+            res.locals.session = req.session;
+            next();
+        });
+
         // everyauth
         app.use(app.everyauth.middleware());
 

@@ -8,8 +8,13 @@ module.exports = function(app) {
         res.render('house/list.jade', {id: "hahaha"});
     });
 
-    app.get('/house/new', function (req, res){
-        res.render('house/new.jade', {});
+    app.get('/house/new', function (req, res) {
+        if (req.session.authenticated) {
+            console.log('hit new house page.');
+            res.render('house/new.jade', {});
+        } else {
+            res.redirect('/signin');
+        }
     })
 
     return this;

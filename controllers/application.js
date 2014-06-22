@@ -1,5 +1,3 @@
-var require_login = require('../utils/require_login');
-
 module.exports = function(app) {
     var ObjectId = app.mongoose.Types.ObjectId;
     var models = app.models;
