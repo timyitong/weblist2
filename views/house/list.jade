@@ -1,4 +1,6 @@
 extends layout
 
 block content
-    div #{message}
+    each house in houses
+        a(href="/house/view/#{house._id}") #{house.title}
+        br 
