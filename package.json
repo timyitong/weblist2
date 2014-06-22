@@ -20,5 +20,8 @@
     "formidable": "1.0.15",
     "underscore": "1.6.0",
     "connect-multiparty": "1.0.5"
+  },
+  "devDependencies": {
+    "nomnom": ">= 1.7.0"
   }
 }

@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+util = require('util');
+
+var opts = require('nomnom')
+    .script('db-dev')
+    .option('store', {
+        help: 'Store specific data into database. (location, ...)',
+        metavar: 'DATA_TYPE(location, ...)'
+    })
+    .parse();
+
+
+if (opts.store) {
+    if (opts.store == 'location') {
+        console.log('Storing location data into database.');
+    } else {
+        console.log(util.format('Data type %s not supported now.', opts.store));
+    }
+}
