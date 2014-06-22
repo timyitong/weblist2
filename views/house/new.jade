@@ -2,67 +2,37 @@ extends layout
 
 block content
     div#house_new_form_container
-        form(method="POST", action="/houses/save", role="form")
+        form(method="POST", action="/house/save", role="form")
             div.form-group
-                  label DATA This is a fake one!
-                  input.form-control(type="text", name="data")
-            div.form-group
-                  label title
+                  label Title
                   input.form-control(type="text", name="title")
 
             div.form-group
-                  label location
-                  input.form-control(type="text")
+                  label Description
+                  input.form-control(type="text", name="description")
 
             div.form-group
-                  label price
-                  input.form-control(type="text")
+                  label Price
+                  input.form-control(type="text", name="price")
 
             div.form-group
-                  label contact email
-                  input.form-control(type="text")
+                  label Founded in
+                  input.form-control(type="text", name="foundedIn")
 
             div.form-group
-                  label contact phone
-                  input.form-control(type="text")
+                  label House Types
+                  input.form-control(type="text", name="houseTypes")
 
             div.form-group
-                  label house type
-                  input.form-control(type="text", name="house_type")
+                  label bathroomNum
+                  input.form-control(type="text", name="bathroomNum")
 
             div.form-group
-                  label years
-                  input.form-control(type="text", name="years")
+                  label livingroomNum
+                  input.form-control(type="text", name="livingroomNum")                              
 
             div.form-group
-                  label bedrooms
-
-            div.form-group
-                  label livingrooms
-
-            div.form-group
-                  label area size
-
-            div.form-group
-                  div options:
-
-            div.form-group
-                  label no_smoking
-
-            div.form-group
-                  label private_laundry
-
-            div.form-group
-                  label cats_ok
-
-            div.form-group
-                  label dogs_ok
-
-            div.form-group
-                  label furnished
-
-            div.form-group
-                  label description
-                  textarea.form-control
+                  label areaSize
+                  input.form-control(type="text", name="areaSize")
 
             input(type="submit", class="btn btn-lg btn-primary")
