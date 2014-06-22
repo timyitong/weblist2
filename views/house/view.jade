@@ -2,10 +2,25 @@ extends layout
 
 block content
     div.container
-        span.h4 #{house.title}
         div.row
-            div #{house.bedroomNum}BR / #{house.bathroomNum} BA
-            div #{house.price.unit}#{house.price.value}
+            div.col-md-6(style="height:75px;")
+                div.house-title
+                    span.h4 #{house.title}
+                    each house_type in house.house_types
+                        div.btn.btn-success #{house_type}
+            div.col-md-5.col-md-offset-1
+                div.house-info-box
+                    div.house-info-num.text-center #{house.price.unit}#{house.price.value}
+                    div.house-info-name.text-center Price
+                div.house-info-box
+                    div.house-info-num.text-center #{house.bedroomNum}
+                    div.house-info-name.text-center Bedrooms
+                div.house-info-box
+                    div.house-info-num.text-center #{house.bathroomNum}
+                    div.house-info-name.text-center Bathrooms
+                div.house-info-box
+                    div.house-info-num.text-center #{house.areaSize.value}
+                    div.house-info-name.text-center #{house.areaSize.unit}
         div
             each image in house.photos
                 img(src="#{image}")

@@ -38,7 +38,7 @@ module.exports = function(app) {
             bedroomNum : req.body.bedroomNum,
             bathroomNum : req.body.bathroomNum,
             lavatoryNum : req.body.lavatoryNum,
-            houseTypes : req.body.houseTypes,
+            houseTypes : [req.body.houseTypes],
             foundedIn : req.body.foundedIn,
             areaSize : {
                 value : req.body.areaSize,
