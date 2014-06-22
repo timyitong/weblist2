@@ -1,19 +1,24 @@
 extends layout
 
 block content
-    div The id of this house is: #{house._id}
-    div The title of this house is: #{house.title}
-    div The description of this house is: #{house.description}
-    div The price of this house is: #{house.price}
+    div.container
+        span.h4 #{house.title}
+        div.row
+            div #{house.bedroomNum}BR / #{house.bathroomNum} BA
+            div #{house.price.unit}#{house.price.value}
+        div
+            each image in house.photos
+                img(src="#{image}")
 
-    div
-        form#new_form(enctype="multipart/form-data", method="post", action="/house/photoupload/#{house._id}")
-            input#photo(type="file", name="photo", accept="image/*", capture="camera",style="display:none;",onchange="var reader=new FileReader();reader.onload=function(e){$('#preview').attr('src',e.target.result).show()};reader.readAsDataURL(this.files[0])")
-            br
-            br
-            input.button(type="button",value="+ Photo",style="margin-right:80px;",onclick="$('#photo').click()")
-            input.button(type="submit",value="Upload")
+        div 
+            div.h3 Description
+            pre
+                p #{house.description}
 
-    div
-        each image in house.photos
-            img(src="#{image}")
+        div
+            form#new_form(enctype="multipart/form-data", method="post", action="/house/photoupload/#{house._id}")
+                input#photo(type="file", name="photo", accept="image/*", capture="camera",style="display:none;",onchange="var reader=new FileReader();reader.onload=function(e){$('#preview').attr('src',e.target.result).show()};reader.readAsDataURL(this.files[0])")
+                br
+                br
+                input.button(type="button",value="+ Photo",style="margin-right:80px;",onclick="$('#photo').click()")
+                input.button(type="submit",value="Upload")

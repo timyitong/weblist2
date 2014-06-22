@@ -31,7 +31,20 @@ module.exports = function(app) {
         var house = new models.HouseModel({
             title : req.body.title,
             description : req.body.description,
-            price : req.body.price
+            price : {
+                value : req.body.price,
+                unit : '$'
+            },
+            bedroomNum : req.body.bedroomNum,
+            bathroomNum : req.body.bathroomNum,
+            lavatoryNum : req.body.lavatoryNum,
+            houseTypes : req.body.houseTypes,
+            foundedIn : req.body.foundedIn,
+            areaSize : {
+                value : req.body.areaSize,
+                unit : 'sqft'
+            }
+
         });
 
         house.save(function (err) {
@@ -59,18 +72,20 @@ module.exports = function(app) {
     }
 
     function resize_image(image, width){
-        console.log("###" + image);
-        console.log("###" + width);
       var options={
         srcPath: image,
         dstPath: image,
         width:  width,
         quality: 0.9
       }
-      app.im.resize(options,function(err){
-        if (!err) return console.log("resized")
-        else console.log(err)
-      })
+
+      app.im.resize(options, function(err){
+        if (!err) {
+            return console.log("resized");
+        } else {
+            console.log(err);
+        }
+      });
     }
 
     var multipart = require('connect-multiparty');
@@ -81,7 +96,7 @@ module.exports = function(app) {
         if (req.files) {
             var tmp=req.files['photo'].path;
             var old=req.files['photo'].name;
-            image=rename_image(tmp, old, "uploads",190);
+            image=rename_image(tmp, old, "uploads", 600);
        
             models.HouseModel.findByIdAndUpdate(ObjectId(req.params.id), { $push: {photos: image} }, function (err, house) {
                 res.redirect('/house/view/' + house._id);

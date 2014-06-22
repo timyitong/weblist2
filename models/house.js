@@ -10,7 +10,10 @@ module.exports = function(app, modelName) {
         user_id: ObjectId,
         location_id: ObjectId,
         
-        price: Number,
+        price: {
+            value : Number,
+            unit : String
+        },
         // Should be a list of file names, (unique tmp codes)
         photos: [String],
         houseTypes: [String],
@@ -19,7 +22,7 @@ module.exports = function(app, modelName) {
         
         bathroomNum: Number,
         lavatoryNum: Number,
-        livingroomNum: Number,
+        bedroomNum: Number,
         areaSize: {
             value: Number,
             unit: String
