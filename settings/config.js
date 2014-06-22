@@ -10,7 +10,10 @@ module.exports = function(app, express){
         });
 
         // express
-        app.use(express.methodOverride());
+        var methodOverride = require("method-override");
+        app.use(methodOverride());
+
+
         app.use(express.cookieParser("csecstring"));
         app.use(express.session({
             secret: 'topsecret',
@@ -23,11 +26,14 @@ module.exports = function(app, express){
             dumpExceptions:  true,
             showStack:  true
         }));
-        
-        app.use(express.bodyParser({
-            keepExtensions:  true,
-            uploadDir:  "./static/uploads"
-        }));
+
+        // @deprecated        
+        // app.use(express.bodyParser({
+        //     keepExtensions:  true,
+        //     uploadDir:  "./static/uploads"
+        // }));
+        app.use(express.urlencoded());
+        app.use(express.json());
 
         // everyauth
         app.use(app.everyauth.middleware());
