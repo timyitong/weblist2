@@ -4,26 +4,8 @@ module.exports = function(app, modelName) {
     var ObjectId= Schema.ObjectId;
 
     var SchemaConfig = {
-        title: String,
-        description: String,
-
-        user_id: ObjectId,
-        location_id: ObjectId,
-        
-        price: Number,
-        // Should be a list of file names, (unique tmp codes)
-        photos: [String],
-        houseTypes: [String],
-        // The year of founded date
-        foundedIn: Number,
-        
-        bathroomNum: Number,
-        lavatoryNum: Number,
-        livingroomNum: Number,
-        areaSize: {
-            value: Number,
-            unit: String
-        },
+        email: String,
+        password: String,
 
         createTime: {type: Date, default: Date.now},
         updateTime: {type: Date},

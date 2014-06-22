@@ -37,7 +37,7 @@ module.exports = function(app, express){
     });
 
     // DB Config
-    app.mongoose.connect('mongodb://localhost/weblist2');
+    app.mongoose.connect('mongodb://localhost:27017/weblist2');
 
     return config;
 }
