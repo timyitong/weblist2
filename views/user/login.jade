@@ -1,0 +1,15 @@
+extends layout
+
+block content
+    p login form
+    div#user_login_form
+        form(method="POST", action="/signin", role="form")
+            div.form-group
+                label email
+                input.form-control(type="text", name="email")
+            
+            div.form-group
+                label password
+                input.form-control(type="password", name="password")
+
+            input(type="submit", class="btn btn-lg btn-primary")

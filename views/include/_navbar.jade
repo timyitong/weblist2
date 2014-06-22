@@ -23,12 +23,17 @@ div.container-full
             //-                 button.btn.btn-success(type="submit") Search
             // Right menu
             ul.nav.navbar-nav.navbar-right
+                - if (session.authenticated)
+                    li
+                        a(href="/signout") Sign out
+                - else
+                    li
+                        a(href="/signin") Sign in
+                    li
+                        a(href="/signup") Sign up
                 li
                     a(href="/house/new") + House Post
-                li
-                    a(href="#") Sign in
-                li
-                    a(href="/signup") Sign up
+
                 li.dropdown
                     a.dropdown-toggle(href="#", data-toggle="dropdown") Dropdown
                         b.caret

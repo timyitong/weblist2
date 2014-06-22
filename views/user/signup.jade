@@ -1,8 +1,9 @@
 extends layout
-
 block content
-    div#user_new_form
-        form(method="POST", action="/user/create", role="form")
+    p #{message}
+    p sign up form
+    div#user_signup_form
+        form(method="POST", action="/signup", role="form")
             div.form-group
                 label email
                 input.form-control(type="text", name="email")

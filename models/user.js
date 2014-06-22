@@ -1,5 +1,5 @@
 module.exports = function(app, modelName) {
-    var mongoose = app.mongoose;    
+    var mongoose = app.mongoose;
     var Schema = mongoose.Schema;
     var ObjectId= Schema.ObjectId;
 
@@ -14,7 +14,11 @@ module.exports = function(app, modelName) {
     var modelSchema = new Schema(SchemaConfig);
 
     // Bind events
-    modelSchema.pre('save', function(next) {
+    modelSchema.pre('save', function(next, done) {
+        var salt = app.bcrypt.genSaltSync(10);
+        var hash = app.bcrypt.hashSync(this.password, salt);
+
+        this.password = hash;
         now = new Date();
         
         this.updateTime = now;
