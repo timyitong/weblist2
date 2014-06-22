@@ -18,7 +18,12 @@ module.exports = function(app) {
     });
 
     app.get('/house/new', function (req, res) {
-        res.render('house/new.jade', {});
+        if (req.session.authenticated) {
+            console.log('hit new house page.');
+            res.render('house/new.jade', {});
+        } else {
+            res.redirect('/signin');
+        }
     });
 
     app.post('/house/save', function (req, res) {

@@ -5,13 +5,15 @@ var app = express();
 // root dir name of the repo
 app.application_root = __dirname;
 
+app.bcrypt = require('bcrypt');
 app.everyauth =  require('everyauth');
 
 app.im = require('imagemagick');
 app.fs = require('node-fs');
-app.path = require("path");
-app.mongoose = require("mongoose")
+app.path = require('path');
+app.mongoose = require('mongoose');
 app.moment = require('moment')
+
 
 // Moment setip
 app.moment.relativeTime={
