@@ -10,36 +10,46 @@ body {
 }
 
 /* line 13, ../../saas/share/main.scss */
+.navbar a {
+  color: #999;
+}
+
+/* line 17, ../../saas/share/main.scss */
+.navbar a:hover {
+  color: #333;
+}
+
+/* line 21, ../../saas/share/main.scss */
 #wrap {
   min-height: 100%;
   height: auto !important;
   margin: 0 auto -60px;
 }
 
-/* line 19, ../../saas/share/main.scss */
+/* line 27, ../../saas/share/main.scss */
 #push {
   height: 60px;
 }
 
 /* For footer*/
-/* line 24, ../../saas/share/main.scss */
+/* line 32, ../../saas/share/main.scss */
 #footer {
   background-color: #f5f5f5;
   height: 60px;
 }
 
-/* line 29, ../../saas/share/main.scss */
+/* line 37, ../../saas/share/main.scss */
 .muted {
   color: #999999;
 }
 
-/* line 33, ../../saas/share/main.scss */
+/* line 41, ../../saas/share/main.scss */
 .footbar {
   margin: 20px auto;
   max-width: 680px;
 }
 
-/* line 38, ../../saas/share/main.scss */
+/* line 46, ../../saas/share/main.scss */
 .footer-item {
   float: left;
   width: auto;
@@ -48,18 +58,18 @@ body {
   margin-right: 10px;
 }
 
-/* line 46, ../../saas/share/main.scss */
+/* line 54, ../../saas/share/main.scss */
 .footer-item a {
   color: #999999;
 }
 
-/* line 50, ../../saas/share/main.scss */
+/* line 58, ../../saas/share/main.scss */
 .footer-item a:hover {
   text-decoration: none;
   color: #2a6496;
 }
 
-/* line 55, ../../saas/share/main.scss */
+/* line 63, ../../saas/share/main.scss */
 #footer .splitter {
   float: left;
 }

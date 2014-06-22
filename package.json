@@ -18,6 +18,7 @@
     "redis": ">=0.0.1",
     "method-override": "2.0.2",
     "formidable": "1.0.15",
-    "underscore": "1.6.0"
+    "underscore": "1.6.0",
+    "connect-multiparty": "1.0.5"
   }
 }
