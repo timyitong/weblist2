@@ -2,23 +2,59 @@ extends layout
 
 block content
     div.container
-        span.h4 #{house.title}
+        div.row.border-bottom
+            div.col-md-6(style="height:75px;")
+                div.house-title
+                    div(style="width:100%;")
+                        span.h4 #{house.title}
+                    div(style="width:100%;margin-top:5px;")
+                        each houseType in house.houseTypes
+                            div.btn.btn-success.btn-sm #{houseType}
+            div.col-md-5.col-md-offset-1
+                div.house-info-box
+                    div.house-info-num.text-center #{house.price.unit}#{house.price.value}
+                    div.house-info-name.text-center Price
+                div.house-info-box
+                    div.house-info-num.text-center #{house.bedroomNum}
+                    div.house-info-name.text-center Bedroom#{house.bedroomNum > 1 ? 's' : ''}
+                div.house-info-box
+                    div.house-info-num.text-center #{house.bathroomNum}
+                    div.house-info-name.text-center Bathroom#{house.bathroomNum > 1 ? 's' : ''}
+                div.house-info-box
+                    div.house-info-num.text-center #{house.areaSize.value}
+                    div.house-info-name.text-center #{house.areaSize.unit}
+        div.border-bottom.image-box
+            div.image-large-box
+                if house.images.length > 0
+                    img(src="/uploads/#{house.images[0]._id}/large#{house.images[0].extension}", image-id="#{house.images[0]._id}")
+                else
+                    img(src="/uploads/default/large.jpg")
+            div.image-small-box
+                ul.list-inline
+                    each image, i in house.images
+                        if i == 0
+                            li.active.image-slideshow
+                                img(src="/uploads/#{image._id}/small#{image.extension}", image-id="#{image._id}")
+                        else
+                            li.image-slideshow
+                                img(src="/uploads/#{image._id}/small#{image.extension}", image-id="#{image._id}")
+
         div.row
-            div #{house.bedroomNum}BR / #{house.bathroomNum} BA
-            div #{house.price.unit}#{house.price.value}
-        div
-            each image in house.photos
-                img(src="#{image}")
+            div.col-xs-12
+                span.h4 Description
+                p(style="font-size:14px;") #{house.description}
 
-        div 
-            div.h3 Description
-            pre
-                p #{house.description}
-
+        br
+        br
+        br
+        br
+        br
+        br
         div
             form#new_form(enctype="multipart/form-data", method="post", action="/house/photoupload/#{house._id}")
-                input#photo(type="file", name="photo", accept="image/*", capture="camera",style="display:none;",onchange="var reader=new FileReader();reader.onload=function(e){$('#preview').attr('src',e.target.result).show()};reader.readAsDataURL(this.files[0])")
+                input(type="text", name="title")
+                input#photo(type="file", name="photo", accept="image/*", capture="camera", style="display:none;", onchange="var reader=new FileReader();reader.onload=function(e){$('#preview').attr('src',e.target.result).show()};reader.readAsDataURL(this.files[0])")
                 br
                 br
-                input.button(type="button",value="+ Photo",style="margin-right:80px;",onclick="$('#photo').click()")
-                input.button(type="submit",value="Upload")
+                input.button(type="button", value="+ Photo", style="margin-right:80px;", onclick="$('#photo').click()")
+                input.button(type="submit", value="Upload")

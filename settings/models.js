@@ -7,6 +7,9 @@ function loadModel(app, modelName) {
 module.exports = function(app){
 
     this.CredentialModel = loadModel(app, 'credential');
+    // Image Model must be initialized before other references
+    this.ImageModel = loadModel(app, 'image');
+
     this.HouseModel = loadModel(app, 'house');
     this.UserModel = loadModel(app, 'user');
 

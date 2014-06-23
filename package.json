@@ -10,7 +10,6 @@
     "mongodb": ">=0.9.6",
     "mongoose": ">=2.5.10",
     "imagemagick": ">=0.0.1",
-    "node-fs": ">=0.1.7",
     "path": ">=0.0.1",
     "moment": ">=1.7.0",
     "everyauth": ">=0.0.1",
