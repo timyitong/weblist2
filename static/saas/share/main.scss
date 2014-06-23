@@ -55,3 +55,12 @@ body {
 #footer .splitter{
     float: left;
 }
+
+.border-bottom {
+    border-width:0 0 1px 0;
+    border-style: solid;
+    border-color: #eee;
+
+    margin-bottom: 7px;
+    padding-bottom:7px;
+}

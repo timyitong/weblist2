@@ -1,22 +1,23 @@
-/* line 1, ../../../saas/sales/house/main.scss */
+/* line 1, ../../saas/house/main.scss */
 #house_new_form_container {
   width: 600px;
   margin: 0 auto;
   height: auto;
 }
 
+/* line 7, ../../saas/house/main.scss */
 .house-info-box {
-    float: left;
-    width: 80px;
-    height: 55px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: #ccc;
-    margin: 10px;
-
-    border-radius: 5px;
+  float: left;
+  width: 80px;
+  height: 55px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ccc;
+  margin: 10px;
+  border-radius: 5px;
 }
 
+/* line 19, ../../saas/house/main.scss */
 .house-info-num {
   width: 100%;
   height: 35px;
@@ -24,12 +25,39 @@
   font-size: 20px;
 }
 
+/* line 26, ../../saas/house/main.scss */
 .house-info-name {
   font-size: 11px;
   height: 20px;
   color: #333;
 }
 
+/* line 32, ../../saas/house/main.scss */
 .house-title {
   margin-top: 20px;
+  width: 100%;
+}
+
+/* line 37, ../../saas/house/main.scss */
+.image-box {
+  width: 600px;
+}
+
+/* line 41, ../../saas/house/main.scss */
+.image-small-box {
+  width: 100%;
+}
+/* line 43, ../../saas/house/main.scss */
+.image-small-box .active {
+  opacity: 1;
+}
+
+/* line 48, ../../saas/house/main.scss */
+.image-large-box {
+  margin-bottom: 10px;
+}
+
+/* line 52, ../../saas/house/main.scss */
+.image-slideshow {
+  opacity: 0.5;
 }

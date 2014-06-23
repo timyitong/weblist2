@@ -9,7 +9,7 @@ app.bcrypt = require('bcrypt');
 app.everyauth =  require('everyauth');
 
 app.im = require('imagemagick');
-app.fs = require('node-fs');
+app.fs = require('fs');
 app.path = require('path');
 app.mongoose = require('mongoose');
 app.moment = require('moment')

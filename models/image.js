@@ -5,31 +5,33 @@ module.exports = function(app, modelName) {
 
     var SchemaConfig = {
         title: String,
-        description: String,
-
-        user_id: ObjectId,
-        location_id: ObjectId,
-        
-        price: {
-            value : Number,
-            unit : String
+        formats: {
+            type: [
+                {
+                    name: String,
+                    size: Number
+                }
+            ],
+            default: [
+                {
+                    name: 'large',
+                    size: 600
+                },
+                {
+                    name: 'medium',
+                    size: 200
+                },
+                {
+                    name: 'small',
+                    size: 50
+                },
+                {
+                    name: 'mini',
+                    size: 38
+                }
+            ]
         },
-        // Should be a list of file names, (unique tmp codes)
-        images: [{
-            _id : String,
-            extension : String
-        }],
-        houseTypes: [String],
-        // The year of founded date
-        builtIn: Number,
-        
-        bathroomNum: Number,
-        lavatoryNum: Number,
-        bedroomNum: Number,
-        areaSize: {
-            value: Number,
-            unit: String
-        },
+        extension: String,
 
         createTime: {type: Date, default: Date.now},
         updateTime: {type: Date},
