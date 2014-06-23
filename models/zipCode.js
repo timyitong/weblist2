@@ -1,12 +1,26 @@
+// zip code model
 module.exports = function(app, modelName) {
-    var mongoose = app.mongoose;    
+    var mongoose = app.mongoose;
     var Schema = mongoose.Schema;
-    var ObjectId= Schema.ObjectId;
-    var bcrypt = app.bcrypt;
+    var ObjectId = Schema.ObjectId;
 
     var SchemaConfig = {
-        credential: String,
-
+        code: {
+            required: true,
+            type: String
+        },
+        city: {
+            type: ObjectId,
+            ref: 'city'
+        },
+        region: {
+            type: ObjectId,
+            ref: 'region'
+        },
+        country: {
+            type: ObjectId,
+            ref: 'country'
+        },
         createTime: {type: Date, default: Date.now},
         updateTime: {type: Date},
     };
@@ -15,12 +29,8 @@ module.exports = function(app, modelName) {
 
     // Bind events
     modelSchema.pre('save', function(next, done) {
-        var salt = app.bcrypt.genSaltSync(10);
-        var hash = app.bcrypt.hashSync(this.credential, salt);
-
-        this.credential = hash;
         now = new Date();
-
+        
         this.updateTime = now;
         if ( !this.createTime ) {
             this.createTime = now;

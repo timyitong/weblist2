@@ -1,0 +1,24 @@
+[
+    {
+        "model": "country",
+        "fields": {
+            "code": "US",
+            "name": "United States",
+            "name_i18n": {
+                "ja": "アメリカ合衆国",
+                "en": "United States"
+            }
+        }
+    },
+    {
+        "model": "country",
+        "fields": {
+            "code": "JP",
+            "name": "Japan",
+            "name_i18n": {
+                "ja": "日本",
+                "en": "Japan"
+            }
+        }
+    }
+]

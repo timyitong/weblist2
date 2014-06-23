@@ -1,12 +1,27 @@
+// country model
 module.exports = function(app, modelName) {
-    var mongoose = app.mongoose;    
+    var mongoose = app.mongoose;
     var Schema = mongoose.Schema;
-    var ObjectId= Schema.ObjectId;
-    var bcrypt = app.bcrypt;
+    var ObjectId = Schema.ObjectId;
+    var Mixed = Schema.Types.Mixed;
 
     var SchemaConfig = {
-        credential: String,
-
+        name: {
+            required: true,
+            type: String
+        },
+        name_i18n: {
+            required: true,
+            type: Mixed
+        },
+        code: {
+            required: true,
+            type: String
+        },
+        regions: [{
+            type: ObjectId,
+            ref: 'region'
+        }],
         createTime: {type: Date, default: Date.now},
         updateTime: {type: Date},
     };
@@ -15,12 +30,8 @@ module.exports = function(app, modelName) {
 
     // Bind events
     modelSchema.pre('save', function(next, done) {
-        var salt = app.bcrypt.genSaltSync(10);
-        var hash = app.bcrypt.hashSync(this.credential, salt);
-
-        this.credential = hash;
         now = new Date();
-
+        
         this.updateTime = now;
         if ( !this.createTime ) {
             this.createTime = now;

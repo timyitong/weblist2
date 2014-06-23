@@ -1,0 +1,566 @@
+[
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-01",
+            "name": "hokkaido",
+            "name_i18n": {
+                "ja": "北海道",
+                "en": "Hokkaido"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-02",
+            "name": "aomori",
+            "name_i18n": {
+                "ja": "青森県",
+                "en": "Aomori"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-03",
+            "name": "Iwate",
+            "name_i18n": {
+                "ja": "岩手県",
+                "en": "Iwate"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-04",
+            "name": "miyagi",
+            "name_i18n": {
+                "ja": "宮城県",
+                "en": "Miyagi"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-05",
+            "name": "akita",
+            "name_i18n": {
+                "ja": "秋田県",
+                "en": "Akita"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-06",
+            "name": "yamagata",
+            "name_i18n": {
+                "ja": "山形県",
+                "en": "Yamagata"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-07",
+            "name": "fukushima",
+            "name_i18n": {
+                "ja": "福島県",
+                "en": "Fukushima"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-08",
+            "name": "ibaraki",
+            "name_i18n": {
+                "ja": "茨城県",
+                "en": "Ibaraki"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-09",
+            "name": "tochigi",
+            "name_i18n": {
+                "ja": "栃木県",
+                "en": "Tochigi"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-10",
+            "name": "gunma",
+            "name_i18n": {
+                "ja": "群馬県",
+                "en": "Gunma"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-11",
+            "name": "saitama",
+            "name_i18n": {
+                "ja": "埼玉県",
+                "en": "Saitama"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-12",
+            "name": "chiba",
+            "name_i18n": {
+                "ja": "千葉県",
+                "en": "Chiba"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-13",
+            "name": "tokyo",
+            "name_i18n": {
+                "ja": "東京都",
+                "en": "Tokyo"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-14",
+            "name": "kanagawa",
+            "name_i18n": {
+                "ja": "神奈川県",
+                "en": "Kanagawa"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-15",
+            "name": "niigata",
+            "name_i18n": {
+                "ja": "新潟県",
+                "en": "Niigata"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-16",
+            "name": "toyama",
+            "name_i18n": {
+                "ja": "富山県",
+                "en": "Toyama"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-17",
+            "name": "ishikawa",
+            "name_i18n": {
+                "ja": "石川県",
+                "en": "Ishikawa"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-18",
+            "name": "hukui",
+            "name_i18n": {
+                "ja": "福井県",
+                "en": "HUkui"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-19",
+            "name": "yamanashi",
+            "name_i18n": {
+                "ja": "山梨県",
+                "en": "Yamanahsi"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-20",
+            "name": "Tokyo",
+            "name_i18n": {
+                "ja": "長野県",
+                "en": "Tokyo"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-21",
+            "name": "gifu",
+            "name_i18n": {
+                "ja": "岐阜県",
+                "en": "Gifu"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-22",
+            "name": "shizuoka",
+            "name_i18n": {
+                "ja": "静岡県",
+                "en": "Shizuoka"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-23",
+            "name": "aichi",
+            "name_i18n": {
+                "ja": "愛知県",
+                "en": "Aichi"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-24",
+            "name": "mie",
+            "name_i18n": {
+                "ja": "三重県",
+                "en": "Mie"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-25",
+            "name": "shiga",
+            "name_i18n": {
+                "ja": "滋賀県",
+                "en": "Shiga"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-26",
+            "name": "kyoto",
+            "name_i18n": {
+                "ja": "京都府",
+                "en": "Kyoto"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-27",
+            "name": "osaka",
+            "name_i18n": {
+                "ja": "大阪府",
+                "en": "Osaka"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-28",
+            "name": "hyogo",
+            "name_i18n": {
+                "ja": "兵庫県",
+                "en": "Hyogo"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-29",
+            "name": "nara",
+            "name_i18n": {
+                "ja": "奈良県",
+                "en": "Nara"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-30",
+            "name": "wakayama",
+            "name_i18n": {
+                "ja": "和歌山県",
+                "en": "Wakayama"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-31",
+            "name": "tottori",
+            "name_i18n": {
+                "ja": "鳥取県",
+                "en": "Tottori"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-32",
+            "name": "shimane",
+            "name_i18n": {
+                "ja": "島根県",
+                "en": "Shimane"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-33",
+            "name": "okayama",
+            "name_i18n": {
+                "ja": "岡山県",
+                "en": "Okayama"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-34",
+            "name": "hiroshima",
+            "name_i18n": {
+                "ja": "広島県",
+                "en": "Hiroshima"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-35",
+            "name": "yamaguchi",
+            "name_i18n": {
+                "ja": "山口県",
+                "en": "Yamaguchi"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-36",
+            "name": "tokushima",
+            "name_i18n": {
+                "ja": "徳島県",
+                "en": "Tokushima"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-37",
+            "name": "kagawa",
+            "name_i18n": {
+                "ja": "香川県",
+                "en": "Kagawa"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-38",
+            "name": "ehime",
+            "name_i18n": {
+                "ja": "愛媛県",
+                "en": "Ehime"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-39",
+            "name": "kochi",
+            "name_i18n": {
+                "ja": "高知県",
+                "en": "Kochi"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-40",
+            "name": "fukuoka",
+            "name_i18n": {
+                "ja": "福岡県",
+                "en": "Fukuoka"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-41",
+            "name": "saga",
+            "name_i18n": {
+                "ja": "佐賀県",
+                "en": "Saga"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-42",
+            "name": "nagasaki",
+            "name_i18n": {
+                "ja": "長崎県",
+                "en": "Nagasaki"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-43",
+            "name": "kumamoto",
+            "name_i18n": {
+                "ja": "熊本県",
+                "en": "Kumamoto"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-44",
+            "name": "oita",
+            "name_i18n": {
+                "ja": "大分県",
+                "en": "Oita"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-45",
+            "name": "miyazaki",
+            "name_i18n": {
+                "ja": "宮崎県",
+                "en": "Miyazaki"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-46",
+            "name": "kagoshima",
+            "name_i18n": {
+                "ja": "鹿児島県",
+                "en": "Kagoshima"
+            }
+        }
+    },
+    {
+        "model": "region",
+        "fields": {
+            "country_code": "JP",
+            "code": "JP-47",
+            "name": "okinawa",
+            "name_i18n": {
+                "ja": "沖縄県",
+                "en": "Okinawa"
+            }
+        }
+    }
+]
