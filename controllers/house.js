@@ -38,8 +38,8 @@ module.exports = function(app) {
             bedroomNum : req.body.bedroomNum,
             bathroomNum : req.body.bathroomNum,
             lavatoryNum : req.body.lavatoryNum,
-            houseTypes : req.body.houseTypes,
-            foundedIn : req.body.foundedIn,
+            houseTypes : [req.body.houseTypes],
+            builtIn : req.body.builtIn,
             areaSize : {
                 value : req.body.areaSize,
                 unit : 'sqft'
@@ -56,51 +56,64 @@ module.exports = function(app) {
         });
     });
 
-    function rename_image(tmp_path, old_name, folder, size){
-        var new_name=tmp_path.substring(tmp_path.lastIndexOf('/') + 1, tmp_path.length);
-                     // + old_name.substring(old_name.lastIndexOf('.'), old_name.length)
-        var new_path="./"+"static/"+folder+"/"+new_name;
-        var new_url="/"+folder+"/"+new_name;
-        console.log(new_path);
-        app.fs.rename(tmp_path,new_path,function(err){
-            if (err) throw err 
-            // app.fs.unlink(tmp_path);
-            resize_image(new_path,size)
-        })
-
-        return new_url
-    }
-
-    function resize_image(image, width){
-      var options={
-        srcPath: image,
-        dstPath: image,
-        width:  width,
-        quality: 0.9
-      }
-
-      app.im.resize(options, function(err){
-        if (!err) {
-            return console.log("resized");
-        } else {
-            console.log(err);
-        }
-      });
-    }
-
+    // Upload images for House
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
-
     app.post('/house/photoupload/:id', multipartMiddleware, function (req, res) {
         console.log(req.files);
         if (req.files) {
-            var tmp=req.files['photo'].path;
-            var old=req.files['photo'].name;
-            image=rename_image(tmp, old, "uploads", 600);
-       
-            models.HouseModel.findByIdAndUpdate(ObjectId(req.params.id), { $push: {photos: image} }, function (err, house) {
-                res.redirect('/house/view/' + house._id);
+            var tmpPath = req.files['photo'].path;
+            var oldName = req.files['photo'].name;
+
+            var title = req.body.title;
+            // Get the file extension
+            var extension = oldName.substring(oldName.lastIndexOf('.'), oldName.length);
+            var imageObj = new models.ImageModel({
+                title: title,
+                extension: extension
             });
+
+            // Store image info into db
+            imageObj.save(function (err, image) {
+                // Distination Directory
+                var dstDir = app.application_root + '/static/uploads/' + image._id + "/";
+                // mkdir
+                app.fs.mkdirSync(dstDir);
+                _.each(image.formats, function(imageFormat) {
+                    var srcPath = tmpPath;
+                    var dstPath = dstDir + imageFormat.name + extension;
+                    var width = imageFormat.size;
+
+                    // Resize the image
+                    app.im.resize({
+                        srcPath: srcPath,
+                        dstPath: dstPath,
+                        width: width,
+                        quality: 0.9
+                    }, function (err) {
+                        if (!err) {
+                            return console.log("resized");
+                        } else {
+                            console.log(err);
+                        }
+                    });
+
+                });
+
+                models.HouseModel.findByIdAndUpdate(ObjectId(req.params.id)
+                    , { $push: { images: {
+                                           _id: image._id,
+                                           extension: image.extension
+                                         } 
+                               }
+                    }, function (err, house) {
+                        res.redirect('/house/view/' + house._id);
+                    }
+                );
+            });
+
+        } else {
+            res.send("No file provided");
         }
     });
 

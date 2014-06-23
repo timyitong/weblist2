@@ -10,14 +10,6 @@ body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.navbar a {
-    color: #999;
-}
-
-.navbar a:hover {
-    color: #333;
-}
-
 #wrap {
     min-height: 100%;
     height: auto !important;
@@ -62,4 +54,13 @@ body {
 
 #footer .splitter{
     float: left;
+}
+
+.border-bottom {
+    border-width:0 0 1px 0;
+    border-style: solid;
+    border-color: #eee;
+
+    margin-bottom: 7px;
+    padding-bottom:7px;
 }
