@@ -50,6 +50,11 @@ if (opts.store) {
                     if (err) {
                         console.log(err);
                     }
+                    console.log(index);
+                    if (index == data.length - 1) {
+                        console.log('Finished storing countries.');
+                        process.exit(0);
+                    }
                 });
             });
         });
@@ -74,6 +79,10 @@ if (opts.store) {
                 new_region.save(function (err) {
                     if (err) {
                         console.log(err);
+                    }
+                    if (index == data.length - 1) {
+                        console.log('Finished storing regions.');
+                        process.exit(0);
                     }
                 });
                 models.CountryModel.findOneAndUpdate(
@@ -109,6 +118,10 @@ if (opts.store) {
                 new_city.save(function (err) {
                     if (err) {
                         console.log(err);
+                    }
+                    if (index == data.length - 1) {
+                        console.log('Finished storing cities.');
+                        process.exit(0);
                     }
                 });
                 models.RegionModel.findOneAndUpdate(
