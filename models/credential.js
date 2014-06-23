@@ -14,7 +14,7 @@ module.exports = function(app, modelName) {
     var modelSchema = new Schema(SchemaConfig);
 
     // Bind events
-    modelSchema.pre('store', function(next, done) {
+    modelSchema.pre('save', function(next, done) {
         var salt = app.bcrypt.genSaltSync(10);
         var hash = app.bcrypt.hashSync(this.credential, salt);
 

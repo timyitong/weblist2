@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 util = require('util');
+var express = require('express');
+var app = express();
+app.mongoose = require('mongoose');
+app.mongoose.connect('mongodb://localhost:27017/weblist2');
+app.models = require('../settings/models')(app);
+var models = app.models;
+
+var fs = require('fs');
+var seedPath =  '../database/seed/';
 
 var opts = require('nomnom')
     .script('db-dev')
@@ -7,13 +16,184 @@ var opts = require('nomnom')
         help: 'Store specific data into database. (location, ...)',
         metavar: 'DATA_TYPE(location, ...)'
     })
+    .option('drop', {
+        help: 'Drop specific collection from database. (city, ...)',
+        metavar: 'DATA_TYPE(city, ...)'
+    })
+    .option('show', {
+        help: 'Show specific collection from database. (city, ...)',
+        metavar: 'DATA_TYPE(city, ...)'
+    })
     .parse();
 
-
 if (opts.store) {
-    if (opts.store == 'location') {
-        console.log('Storing location data into database.');
+    if (opts.store == 'country') {
+        console.log('inserting countries.');
+
+        fs.readFile(seedPath + 'countries.json', 'utf8', function (err, data) {
+            if (err) {
+                console.log('Error: ' + err);
+                process.exit(1);
+            }
+
+            data = JSON.parse(data);
+
+            data.forEach(function (element, index, arr) {
+                var fields = element.fields;
+                var new_country = new models.CountryModel({
+                    name: fields.name,
+                    name_i18n: fields.name_i18n,
+                    code: fields.code,
+
+                });
+                new_country.save(function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            });
+        });
+    } else if (opts.store == 'region') {
+
+        console.log('inserting regions');
+        fs.readFile(seedPath + 'regions.json', 'utf8', function (err, data) {
+            if (err) {
+                console.log('Error: ' + err);
+                process.exit(1);
+            }
+
+            data = JSON.parse(data);
+
+            data.forEach(function (element, index, arr) {
+                var fields = element.fields;
+                var new_region = new models.RegionModel({
+                    name: fields.name,
+                    name_i18n: fields.name_i18n,
+                    code: fields.code,
+                });
+                new_region.save(function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+                models.CountryModel.findOneAndUpdate(
+                    { code: fields.country_code },
+                    { $push: { regions: new_region._id }},
+                    function (err, country) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            });
+        });
+
+    } else if (opts.store == 'city') {
+
+        console.log('inserting cities');
+        fs.readFile(seedPath + 'cities.json', 'utf8', function (err, data) {
+            if (err) {
+                console.log('Error: ' + err);
+                process.exit(1);
+            }
+
+            data = JSON.parse(data);
+
+            data.forEach(function (element, index, arr) {
+                var fields = element.fields;
+                var new_city = new models.CityModel({
+                    name: fields.name,
+                    name_i18n: fields.name_i18n,
+                    code: fields.code,
+
+                });
+                new_city.save(function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+                models.RegionModel.findOneAndUpdate(
+                    { code: fields.region_code },
+                    { $push: { cities: new_city._id }},
+                    function (err, city) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            });
+        });
+
     } else {
         console.log(util.format('Data type %s not supported now.', opts.store));
+    }
+} else if (opts.drop) {
+    if (opts.drop == 'city') {
+        return models.CityModel.remove({}, function (err) {
+            if (err) {
+                console.log(err);
+                process.exit(0);
+            } else {
+                console.log('Successfully dropped city.');
+                process.exit(0);
+            }
+        });
+    } else if (opts.drop == 'country') {
+        return models.CountryModel.remove({}, function (err) {
+            if (err) {
+                console.log(err);
+                process.exit(0);
+            } else {
+                console.log('Successfully dropped country.');
+                process.exit(0);
+            }
+        });        
+    } else if (opts.drop == 'region') {
+        return models.RegionModel.remove({}, function (err) {
+            if (err) {
+                console.log(err);
+                process.exit(0);
+            } else {
+                console.log('Successfully dropped region.');
+                process.exit(0);
+            }
+        });        
+    } else {
+        console.log('not supported.');
+        process.exit(0);
+    }
+} else if (opts.show) {
+    if (opts.show == 'city') {
+        models.CityModel.find(function (err, cities) {
+            if (err) {
+                console.log(err);
+                process.exit(0);
+            } else {
+                console.log(cities);
+                process.exit(0);
+            }
+        });
+    } else if (opts.show == 'country') {
+        models.CountryModel.find(function (err, countries) {
+
+            if (err) {
+                console.log(err);
+                process.exit(0);
+            } else {
+                console.dir(countries);
+                process.exit(0);
+            }
+        });        
+    } else if (opts.show == 'region') {
+        models.RegionModel.find(function (err, countries) {
+            if (err) {
+                console.log(err);
+                process.exit(0);
+            } else {
+                console.dir(countries);
+                process.exit(0);
+            }
+        });        
+    } else {
+        console.log('not supported.');
+        process.exit(0);
     }
 }
