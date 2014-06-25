@@ -12,6 +12,7 @@ module.exports = function(app){
 
     this.HouseModel = loadModel(app, 'house');
     this.UserModel = loadModel(app, 'user');
+    this.UserProfileModel = loadModel(app, 'userProfile');
 
     return this;
 }
