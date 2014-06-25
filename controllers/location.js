@@ -11,7 +11,7 @@ module.exports = function(app) {
                     if (err) {
                         res.send(500, { message: 'Error'});
                     } else {
-                        res.send(countries);
+                        res.send({ countries: countries });
                     }
                 },
 
@@ -19,7 +19,7 @@ module.exports = function(app) {
                     if (err) {
                         res.send(500, { message: 'Error'});
                     } else {
-                        res.send(countries);
+                        res.send({ countries: countries });
                     }
                 },
 
@@ -27,7 +27,7 @@ module.exports = function(app) {
                     if (err) {
                         res.send(500, { message: 'Error'});
                     } else {
-                        res.send(countries);
+                        res.send({ countries: countries });
                     }
                 }
             })
@@ -42,7 +42,7 @@ module.exports = function(app) {
                     if (err) {
                         res.send(500, { message: 'Error'});
                     } else {
-                        res.send(regions);
+                        res.send({ regions: regions });
                     }
                 },
 
@@ -50,7 +50,7 @@ module.exports = function(app) {
                     if (err) {
                         res.send(500, { message: 'Error'});
                     } else {
-                        res.send(regions);
+                        res.send({ regions: regions });
                     }
                 },
 
@@ -58,7 +58,7 @@ module.exports = function(app) {
                     if (err) {
                         res.send(500, { message: 'Error'});
                     } else {
-                        res.send(regions);
+                        res.send({ regions: regions });
                     }
                 }
             })
@@ -73,7 +73,7 @@ module.exports = function(app) {
                     if (err) {
                         res.send(500, { message: 'Error'});
                     } else {
-                        res.send(cities);
+                        res.send({ cities: cities });
                     }
                 },
 
@@ -81,7 +81,7 @@ module.exports = function(app) {
                     if (err) {
                         res.send(500, { message: 'Error'});
                     } else {
-                        res.send(cities);
+                        res.send({ cities: cities });
                     }
                 },
 
@@ -89,7 +89,7 @@ module.exports = function(app) {
                     if (err) {
                         res.send(500, { message: 'Error'});
                     } else {
-                        res.send(cities);
+                        res.send({ cities: cities });
                     }
                 }
             })
