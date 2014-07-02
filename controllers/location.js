@@ -3,13 +3,12 @@ module.exports = function(app) {
     var models = app.models;
 
     app.get('/countries', function (req, res) {
-
         var query = models.CountryModel.find().select('name name_i18n code -_id');
         query.exec(function (err, countries) {
             res.format({
                 'text/plain': function() {
                     if (err) {
-                        res.send(500, { message: 'Error'});
+                        res.send(400, { message: 'Error'});
                     } else {
                         res.send({ countries: countries });
                     }
@@ -17,7 +16,7 @@ module.exports = function(app) {
 
                 'text/html': function() {
                     if (err) {
-                        res.send(500, { message: 'Error'});
+                        res.send(400, { message: 'Error'});
                     } else {
                         res.send({ countries: countries });
                     }
@@ -25,7 +24,7 @@ module.exports = function(app) {
 
                 'application/json': function() {
                     if (err) {
-                        res.send(500, { message: 'Error'});
+                        res.send(400, { message: 'Error'});
                     } else {
                         res.send({ countries: countries });
                     }
@@ -40,7 +39,7 @@ module.exports = function(app) {
             res.format({
                 'text/plain': function() {
                     if (err) {
-                        res.send(500, { message: 'Error'});
+                        res.send(400, { message: 'Error'});
                     } else {
                         res.send({ regions: regions });
                     }
@@ -48,7 +47,7 @@ module.exports = function(app) {
 
                 'text/html': function() {
                     if (err) {
-                        res.send(500, { message: 'Error'});
+                        res.send(400, { message: 'Error'});
                     } else {
                         res.send({ regions: regions });
                     }
@@ -56,7 +55,7 @@ module.exports = function(app) {
 
                 'application/json': function() {
                     if (err) {
-                        res.send(500, { message: 'Error'});
+                        res.send(400, { message: 'Error'});
                     } else {
                         res.send({ regions: regions });
                     }
@@ -71,7 +70,7 @@ module.exports = function(app) {
             res.format({
                 'text/plain': function() {
                     if (err) {
-                        res.send(500, { message: 'Error'});
+                        res.send(400, { message: 'Error'});
                     } else {
                         res.send({ cities: cities });
                     }
@@ -79,7 +78,7 @@ module.exports = function(app) {
 
                 'text/html': function() {
                     if (err) {
-                        res.send(500, { message: 'Error'});
+                        res.send(400, { message: 'Error'});
                     } else {
                         res.send({ cities: cities });
                     }
@@ -87,7 +86,7 @@ module.exports = function(app) {
 
                 'application/json': function() {
                     if (err) {
-                        res.send(500, { message: 'Error'});
+                        res.send(400, { message: 'Error'});
                     } else {
                         res.send({ cities: cities });
                     }
