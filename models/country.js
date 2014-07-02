@@ -11,8 +11,14 @@ module.exports = function(app, modelName) {
             type: String
         },
         name_i18n: {
-            required: true,
-            type: Mixed
+            ja: {
+                required: true,
+                type: String
+            },
+            en: {
+                required: true,
+                type: String
+            }
         },
         code: {
             required: true,

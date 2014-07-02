@@ -10,11 +10,13 @@ var models = app.models;
 var fs = require('fs');
 var seedPath =  '../database/seed/';
 
+var exec = require('child_process').exec;
+
 var opts = require('nomnom')
     .script('db-dev')
     .option('store', {
-        help: 'Store specific data into database. (location, ...)',
-        metavar: 'DATA_TYPE(location, ...)'
+        help: 'Store specific data into database. (city, ...)',
+        metavar: 'DATA_TYPE(city, ...)'
     })
     .option('drop', {
         help: 'Drop specific collection from database. (city, ...)',
@@ -24,9 +26,19 @@ var opts = require('nomnom')
         help: 'Show specific collection from database. (city, ...)',
         metavar: 'DATA_TYPE(city, ...)'
     })
+    .option('start', {
+        help: 'Start mongo database.',
+        flag: true
+    })
     .parse();
 
-if (opts.store) {
+if (opts.start) {
+    var child = exec('mongod --config ../database/mongod.conf',
+      function (error, stdout, stderr) {
+        console.log('stdout: ' + stdout);
+        console.log('stderr: ' + stderr);
+    });
+} else if (opts.store) {
     if (opts.store == 'country') {
         console.log('inserting countries.');
 
@@ -44,7 +56,6 @@ if (opts.store) {
                     name: fields.name,
                     name_i18n: fields.name_i18n,
                     code: fields.code,
-
                 });
                 new_country.save(function (err) {
                     if (err) {
@@ -75,6 +86,7 @@ if (opts.store) {
                     name: fields.name,
                     name_i18n: fields.name_i18n,
                     code: fields.code,
+                    country_code: fields.country_code,
                 });
                 new_region.save(function (err) {
                     if (err) {
@@ -113,7 +125,7 @@ if (opts.store) {
                     name: fields.name,
                     name_i18n: fields.name_i18n,
                     code: fields.code,
-
+                    region_code: fields.region_code,
                 });
                 new_city.save(function (err) {
                     if (err) {

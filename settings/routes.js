@@ -8,8 +8,9 @@ module.exports = function(app){
 
     loadController(app, 'application');
 
-    loadController(app, 'user');
     loadController(app, 'house');
+    loadController(app, 'location');
+    loadController(app, 'user');
 
     return this;
 }
