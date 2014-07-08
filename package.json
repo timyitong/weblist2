@@ -5,20 +5,21 @@
   "private": true,
   "dependencies": {
     "bcrypt": "0.7.*",
+    "connect-multiparty": "1.0.5",
+    "everyauth": ">=0.0.1",
     "express": "3.x",
+    "formidable": "1.0.15",
+    "imagemagick": ">=0.0.1",
     "jade": ">= 0.0.1",
+    "method-override": "2.0.2",
+    "moment": ">=1.7.0",
     "mongodb": ">=0.9.6",
     "mongoose": ">=2.5.10",
-    "imagemagick": ">=0.0.1",
+    "mongoose-schema-extend": ">=0.4.9",
     "path": ">=0.0.1",
-    "moment": ">=1.7.0",
-    "everyauth": ">=0.0.1",
     "pusher": ">=0.0.1",
     "redis": ">=0.0.1",
-    "method-override": "2.0.2",
-    "formidable": "1.0.15",
-    "underscore": "1.6.0",
-    "connect-multiparty": "1.0.5"
+    "underscore": "1.6.0"
   },
   "devDependencies": {
     "nomnom": ">= 1.7.0"

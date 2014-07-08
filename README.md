@@ -11,3 +11,7 @@ Install ImageMagick for picture compression and resizing
 <pre>
 brew install ImageMagick
 </pre>
+
+Development Environment
+Install jade plugin for sublime text
+http://stackoverflow.com/questions/7666977/syntax-highlighting-for-jade-in-sublime-text-2
