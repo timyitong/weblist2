@@ -39,7 +39,7 @@ module.exports = function(app, modelName) {
 
         geoLocation: {
             lat: String,
-            lon: String
+            lng: String
         },
 
         createTime: {type: Date, default: Date.now},
