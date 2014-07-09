@@ -11,7 +11,11 @@ module.exports = function(app){
     this.ImageModel = loadModel(app, 'image');
 
     this.HouseModel = loadModel(app, 'house');
+
     this.UserModel = require(MODEL_PATH + 'user').model;
+
+    this.UserProfileModel = loadModel(app, 'userProfile');
+
     // location models
     this.LocationModel = loadModel(app, 'location');
     this.CityModel = loadModel(app, 'city');

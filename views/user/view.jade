@@ -1,0 +1,7 @@
+extends layout
+block content
+    div.containter
+        div.row
+            span #{profile.username}
+        div.row
+            img(src="/uploads/#{profile.avatar._id}/small#{profile.avatar.extension}")
