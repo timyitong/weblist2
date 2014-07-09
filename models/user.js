@@ -2,9 +2,6 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    ObjectId = Schema.ObjectId,
-    BaseModel = require('./base').model,
     BaseSchema = require('./base').schema,
     extend = require('mongoose-schema-extend'),
     bcrypt = require('bcrypt'),
@@ -16,7 +13,7 @@ var mongoose = require('mongoose'),
  */
 modelSchema = BaseSchema.extend({
     email: String,
-    password: String,    
+    password: String,
 });
 
 /**
