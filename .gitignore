@@ -27,4 +27,6 @@ node_modules
 
 # compass cache
 .sass-cache
-static/uploads
+static/uploads/*
+
+.DS_Store

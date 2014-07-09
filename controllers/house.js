@@ -79,7 +79,7 @@ module.exports = function(app) {
                 var dstDir = app.application_root + '/static/uploads/' + image._id + "/";
                 // mkdir
                 app.fs.mkdirSync(dstDir);
-                _.each(image.formats, function(imageFormat) {
+                _.each(image.formats, function (imageFormat) {
                     var srcPath = tmpPath;
                     var dstPath = dstDir + imageFormat.name + extension;
                     var width = imageFormat.size;

@@ -1,5 +1,5 @@
 module.exports = function(app) {
-
+    var _ = require('underscore');
     var models = app.models;
     var ObjectId=app.mongoose.Types.ObjectId;
 
@@ -43,7 +43,6 @@ module.exports = function(app) {
         return models.UserModel.findById({_id: ObjectId(req.session.uid)}, function (err, user) {
             if (!err) {
                 models.UserProfileModel.findOne({userId: ObjectId(user._id)}, function (err, profile) {
-                    console.log(profile);
                     if (!err) {
                         return res.render('user/edit.jade', {user: user, profile: profile});                        
                     } else {
@@ -57,17 +56,20 @@ module.exports = function(app) {
     });
 
     app.post('/user/edit', function (req, res) {
-
+        if (req.session.uid == undefined) {
+            return res.redirect('/signin');
+        }
+        // TODO        
     });
 
     // Upload images for House
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
     app.post('/user/avatar', multipartMiddleware, function (req, res) {
-        if (req.files && req.sesson.uid != undefined) {
+        if (req.files && req.session.uid != undefined) {
             var tmpPath = req.files['photo'].path;
             var oldName = req.files['photo'].name;
-            var uid = req.sesson.uid;
+            var uid = req.session.uid;
 
             // Get the file extension
             var extension = oldName.substring(oldName.lastIndexOf('.'), oldName.length);
@@ -84,7 +86,7 @@ module.exports = function(app) {
                 app.fs.mkdirSync(dstDir);
                 _.each(image.formats, function (imageFormat) {
                     var srcPath = tmpPath;
-                    var dstPath = dstPath + imageFormat.name + extension;
+                    var dstPath = dstDir + imageFormat.name + extension;
                     var width = imageFormat.size;
 
                     // Resize the image
@@ -93,11 +95,12 @@ module.exports = function(app) {
                         dstPath: dstPath,
                         width: width,
                         quality: 0.9
-                    }, function (err) {
+                    }, function (err, stdout, stderr) {
+                        console.log(dstPath);
                         if (!err) {
                             return console.log("Avatar resized");
                         } else {
-                            console.log(err);
+                            console.log(err + "\n message: " + stderr);
                         }
                     });
                 });
@@ -108,8 +111,8 @@ module.exports = function(app) {
                                           extension: image.extension
                                         }
                               }
-                      }, function (err, user) {
-                        res.redirect('/user/view/' + user._id);
+                      }, function (err, profile) {
+                        res.redirect('/user/view/' + profile.userId);
                     }
                 );
             });
@@ -132,9 +135,9 @@ module.exports = function(app) {
             }
         }
 
-        return models.UserModel.findById({_id: ObjectId(uid)}, function (err, user) {
+        models.UserModel.findOne({_id: ObjectId(uid)}, function (err, user) {
             if (!err) {
-                return models.UserProfileModel.findOne({userId: ObjectId(user._id)}, function (err, profile) {
+                return models.UserProfileModel.findOne({userId: user._id}, function (err, profile) {
                     res.render('user/view.jade', {user: user, profile: profile, canEdit: uid == req.session.uid});
                 });
             } else {
