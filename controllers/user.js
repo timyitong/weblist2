@@ -1,7 +1,7 @@
 module.exports = function(app) {
     var _ = require('underscore');
     var models = app.models;
-    var ObjectId=app.mongoose.Types.ObjectId;
+    var ObjectId = app.mongoose.Types.ObjectId;
 
     app.post('/signin', function (req, res) {
         return models.UserModel.findOne({ email: req.body.email }, function(err, user) {
