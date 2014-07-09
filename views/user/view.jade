@@ -5,3 +5,6 @@ block content
             span #{profile.username}
         div.row
             img(src="/uploads/#{profile.avatar._id}/small#{profile.avatar.extension}")
+        div
+            - if (session.uid == user._id)
+                a(href="/user/edit") edit
