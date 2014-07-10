@@ -40,7 +40,7 @@ var constants = require("./utils/constants");
 var config = require('./settings/config')(app, express);
 
 // Include models file
-app.models = require("./settings/models")(app);
+app.models = require("./settings/models");
 
 // Include the controller file
 require('./settings/routes')(app);

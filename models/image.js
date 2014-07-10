@@ -1,55 +1,52 @@
-module.exports = function(app, modelName) {
-    var mongoose = app.mongoose;    
-    var Schema = mongoose.Schema;
-    var ObjectId= Schema.ObjectId;
+/**
+ * Module dependencies.
+ */
+var mongoose = require('mongoose');
+var ObjectId = mongoose.Schema.ObjectId;
+var BaseSchema = require('./base').schema;
+var extend = require('mongoose-schema-extend');
+var MODEL_NAME = 'image';
+var modelSchema;
 
-    var SchemaConfig = {
-        title: String,
-        formats: {
-            type: [
-                {
-                    name: String,
-                    size: Number
-                }
-            ],
-            default: [
-                {
-                    name: 'large',
-                    size: 600
-                },
-                {
-                    name: 'medium',
-                    size: 200
-                },
-                {
-                    name: 'small',
-                    size: 50
-                },
-                {
-                    name: 'mini',
-                    size: 38
-                }
-            ]
-        },
-        extension: String,
+/**
+ * Define Schema
+ */
+modelSchema = BaseSchema.extend({
+    title: String,
+    formats: {
+        type: [
+            {
+                name: String,
+                size: Number
+            }
+        ],
+        default: [
+            {
+                name: 'large',
+                size: 600
+            },
+            {
+                name: 'medium',
+                size: 200
+            },
+            {
+                name: 'small',
+                size: 50
+            },
+            {
+                name: 'mini',
+                size: 38
+            }
+        ]
+    },
+    extension: String,
+});
 
-        createTime: {type: Date, default: Date.now},
-        updateTime: {type: Date},
-    };
-
-    var modelSchema = new Schema(SchemaConfig);
-
-    // Bind events
-    modelSchema.pre('save', function(next) {
-        now = new Date();
-
-        this.updateTime = now;
-        if ( !this.createTime ) {
-            this.createTime = now;
-        }
-
-        next();
-    });
-
-    return mongoose.model(modelName, modelSchema);
-}
+/**
+ * Expose Schema and model
+ */
+module.exports = {
+    name: MODEL_NAME,
+    schema: modelSchema,
+    model: mongoose.model(MODEL_NAME, modelSchema)
+};

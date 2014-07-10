@@ -3,36 +3,71 @@ extends layout
 block content
     div#house_new_form_container
         form(method="POST", action="/house/save", role="form")
-            div.form-group
-                  label Title
-                  input.form-control(type="text", name="title")
 
             div.form-group
-                  label Description
-                  textarea.form-control(name="description")
+                label Title
+                input.form-control(type="text", name="title")
 
             div.form-group
-                  label Price
-                  input.form-control(type="text", name="price")
+                label Description
+                textarea.form-control(name="description")
 
             div.form-group
-                  label Built in
-                  input.form-control(type="text", name="builtIn")
+                label Price
+                input.form-control(type="text", name="price")
 
             div.form-group
-                  label House Types
-                  input.form-control(type="text", name="houseTypes")
+                label Built in
+                input.form-control(type="text", name="builtIn")
 
             div.form-group
-                  label bathroomNum
-                  input.form-control(type="text", name="bathroomNum")
+                label House Types
+                input.form-control(type="text", name="houseTypes")
 
             div.form-group
-                  label bedroomNum
-                  input.form-control(type="text", name="bedroomNum")                              
+                label bathroomNum
+                input.form-control(type="text", name="bathroomNum")
 
             div.form-group
-                  label areaSize
-                  input.form-control(type="text", name="areaSize")
+                label bedroomNum
+                input.form-control(type="text", name="bedroomNum")
+
+            div.form-group
+                label areaSize
+                input.form-control(type="text", name="areaSize")
+
+            div.form-group
+                label Country
+                input.form-control(type="text", name="country", value="JP")
+
+            div.form-group
+                label Region
+                input.form-control(type="text", name="region", value="JP-14")
+
+            div.form-group
+                label City
+                input.form-control(type="text", name="city", value="JP-141003")
+
+            div.form-group
+                label Street
+                input.form-control(type="text", name="street")
+
+            div.form-group
+                label Building Name (optional)
+                input.form-control(type="text", name="building")
+
+            div.form-group
+                label Zip Code
+                input.form-control(type="text", name="zipCode")
+
+            div.form-group
+                label Latitude
+                input.form-control(type="text", name="lat")
+
+            div.form-group
+                label Longitude
+                input.form-control(type="text", name="lng")
+
+
 
             input(type="submit", class="btn btn-lg btn-primary")

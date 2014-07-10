@@ -1,33 +1,30 @@
-module.exports = function(app, modelName) {
-    var mongoose = app.mongoose;
-    var Schema = mongoose.Schema;
-    var ObjectId= Schema.ObjectId;
+/**
+ * Module dependencies.
+ */
+var mongoose = require('mongoose');
+var ObjectId = mongoose.Schema.ObjectId;
+var BaseSchema = require('./base').schema;
+var extend = require('mongoose-schema-extend');
+var MODEL_NAME = 'userProfile';
+var modelSchema;
 
-    var SchemaConfig = {
-        userId: ObjectId,
-        username: String,
-        avatar: {
-            _id: ObjectId,
-            extension: String
-        },
+/**
+ * Define Schema
+ */
+modelSchema = BaseSchema.extend({
+    userId: ObjectId,
+    username: String,
+    avatar: {
+        _id: ObjectId,
+        extension: String
+    }
+});
 
-        createTime: {type: Date, default: Date.now},
-        updateTime: {type: Date},
-    };
-
-    var modelSchema = new Schema(SchemaConfig);
-
-    // Bind events
-    modelSchema.pre('save', function(next, done) {
-        now = new Date();
-        
-        this.updateTime = now;
-        if ( !this.createTime ) {
-            this.createTime = now;
-        }
-
-        next();
-    });
-
-    return mongoose.model(modelName, modelSchema);
-}
+/**
+ * Expose Schema and model
+ */
+module.exports = {
+    name: MODEL_NAME,
+    schema: modelSchema,
+    model: mongoose.model(MODEL_NAME, modelSchema)
+};

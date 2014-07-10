@@ -4,7 +4,7 @@ var express = require('express');
 var app = express();
 app.mongoose = require('mongoose');
 app.mongoose.connect('mongodb://localhost:27017/weblist2');
-app.models = require('../settings/models')(app);
+app.models = require('../settings/models');
 var models = app.models;
 
 var fs = require('fs');
@@ -97,14 +97,6 @@ if (opts.start) {
                         process.exit(0);
                     }
                 });
-                models.CountryModel.findOneAndUpdate(
-                    { code: fields.country_code },
-                    { $push: { regions: new_region._id }},
-                    function (err, country) {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
             });
         });
 
@@ -134,14 +126,6 @@ if (opts.start) {
                     if (index == data.length - 1) {
                         console.log('Finished storing cities.');
                         process.exit(0);
-                    }
-                });
-                models.RegionModel.findOneAndUpdate(
-                    { code: fields.region_code },
-                    { $push: { cities: new_city._id }},
-                    function (err, city) {
-                    if (err) {
-                        console.log(err);
                     }
                 });
             });
