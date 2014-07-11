@@ -59,7 +59,33 @@ module.exports = function(app) {
         if (req.session.uid == undefined) {
             return res.redirect('/signin');
         }
-        // TODO        
+        var password = req.body.password;
+
+        if (password != undefined && password.length != 0) {
+            if (password != req.body.password2) {
+                res.send({"message": "Password unmatched."});
+            } else {
+                app.models.UserModel.findOneAndUpdate({_id: ObjectId(req.session.uid)}
+                    , { $set: {password: password} }
+                    , function (err, user) {
+                        // TODO a potential bug: not sending any response
+                        console.log("password changed");
+                        console.log(err);
+                    }
+                );
+            }
+        }
+
+        if (req.body.username != undefined) {
+            models.UserProfileModel.findOneAndUpdate(
+                  { userId: ObjectId(req.session.uid) }
+                , { $set: { username: req.body.username
+                          }
+                  }, function (err, profile) {
+                    res.redirect('/user/view');
+                }
+            );
+        }
     });
 
     // Upload images for House
