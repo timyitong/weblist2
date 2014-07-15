@@ -1,5 +1,9 @@
 extends layout
 
+block append head
+    script(src="/javascript/house/houseView.js")
+    link(rel="stylesheet", type="text/css", href="/css/house/housePost.css")
+
 block content
     div.container
         div.row.border-bottom
@@ -23,22 +27,24 @@ block content
                 div.house-info-box
                     div.house-info-num.text-center #{house.areaSize.value}
                     div.house-info-name.text-center #{house.areaSize.unit}
-        div.border-bottom.image-box
-            div.image-large-box
-                if house.images.length > 0
-                    img(src="/uploads/#{house.images[0]._id}/large#{house.images[0].extension}", image-id="#{house.images[0]._id}")
-                else
-                    img(src="/uploads/default/large.jpg")
-            div.image-small-box
-                ul.list-inline
-                    each image, i in house.images
-                        if i == 0
-                            li.active.image-slideshow
-                                img(src="/uploads/#{image._id}/small#{image.extension}", image-id="#{image._id}")
-                        else
-                            li.image-slideshow
-                                img(src="/uploads/#{image._id}/small#{image.extension}", image-id="#{image._id}")
-
+        div.row
+            div.border-bottom.image-box
+                div.image-large-box
+                    if house.images.length > 0
+                        img(src="/uploads/#{house.images[0]._id}/large#{house.images[0].extension}", image-id="#{house.images[0]._id}")
+                    else
+                        img(src="/uploads/default/large.jpg")
+                div.image-small-box
+                    ul.list-inline
+                        each image, i in house.images
+                            if i == 0
+                                li.active.image-slideshow
+                                    img(src="/uploads/#{image._id}/small#{image.extension}", image-id="#{image._id}")
+                            else
+                                li.image-slideshow
+                                    img(src="/uploads/#{image._id}/small#{image.extension}", image-id="#{image._id}")
+            div.popin
+                div#map
         div.row
             div.col-xs-12
                 span.h4 Description

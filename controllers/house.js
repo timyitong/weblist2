@@ -159,5 +159,27 @@ module.exports = function(app) {
         });
     }); 
 
+
+    app.get('/house/:id', function(req, res) {
+        var query = models.HouseModel.findOne({ _id: req.params.id }, function (err, house) {
+            res.format({
+                'text/plain': function() {
+                    res.send(400, { message: 'Not supported.'});
+                },
+
+                'text/html': function() {
+                    res.send(400, { message: 'Not supported.'});
+                },
+
+                'application/json': function() {
+                    if (err) {
+                        res.send(400, { message: 'Error'});
+                    } else {
+                        res.send({ house: house });
+                    }
+                }
+            })
+        });
+    });
     return this;
 }
