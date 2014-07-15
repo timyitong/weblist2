@@ -12,9 +12,31 @@ module.exports = function(app) {
 
     app.get('/houses', function (req, res) {
         return models.HouseModel.find(function(err, houses) {
-            if (!err) {
-                return res.render('house/list.jade', {houses: houses});
-            }
+            res.format({
+                'text/plain': function() {
+                    if (err) {
+                        res.send(400, { message: 'Error' });
+                    } else {
+                        return res.render('house/list.jade', {houses: houses});
+                    }
+                },
+
+                'text/html': function() {
+                    if (err) {
+                        res.send(400, { message: 'Error' });
+                    } else {
+                        return res.render('house/list.jade', {houses: houses});
+                    }
+                },
+
+                'application/json': function() {
+                    if (err) {
+                        res.send(400, { message: 'Error'});
+                    } else {
+                        res.send({ houses: houses });
+                    }
+                }
+            });
         });
     });
 
@@ -161,7 +183,7 @@ module.exports = function(app) {
 
 
     app.get('/house/:id', function(req, res) {
-        var query = models.HouseModel.findOne({ _id: req.params.id }, function (err, house) {
+        return models.HouseModel.findOne({ _id: req.params.id }, function(err, house) {
             res.format({
                 'text/plain': function() {
                     res.send(400, { message: 'Not supported.'});
@@ -178,7 +200,7 @@ module.exports = function(app) {
                         res.send({ house: house });
                     }
                 }
-            })
+            });
         });
     });
     return this;

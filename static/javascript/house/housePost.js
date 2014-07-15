@@ -30,7 +30,7 @@ $(function() {
                     if (status == 'OK') {
                         var latlng = results[0].geometry.location;
                         if (locationMap == undefined) {
-                             locationMap = new GMaps({
+                            locationMap = new GMaps({
                                 div: '#map',
                                 lat: latlng.lat(),
                                 lng: latlng.lng()
