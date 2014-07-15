@@ -232,10 +232,10 @@
         "fields": {
             "country_code": "JP",
             "code": "JP-20",
-            "name": "Tokyo",
+            "name": "nagano",
             "name_i18n": {
                 "ja": "長野県",
-                "en": "Tokyo"
+                "en": "Nagano"
             }
         }
     },
