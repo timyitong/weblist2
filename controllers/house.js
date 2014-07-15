@@ -20,8 +20,13 @@ module.exports = function(app) {
 
     app.get('/house/new', function (req, res) {
         if (req.session.authenticated) {
-            console.log('hit new house page.');
-            res.render('house/new.jade', {});
+            var query = models.CountryModel.find().select('name name_i18n code -_id');
+            query.exec(function (err, countries) {
+                if (err || countries == undefined) {
+                    res.redirect('/');
+                }
+                res.render('house/new.jade', { countries: countries });
+            });
         } else {
             res.redirect('/signin');
         }
@@ -39,46 +44,45 @@ module.exports = function(app) {
                 return models.CityModel.findOne({ code: req.body.city, region_code: req.body.region }, function (err, city) {
                     if (err || city == undefined) {
                         return res.send('City not found');
-                    } else {
-                        var geoLocation = {
-                            lat: req.body.lat,
-                            lng: req.body.lng
-                        };
-                        var house = new models.HouseModel({
-                            title : req.body.title,
-                            description : req.body.description,
-                            price : {
-                                value : req.body.price,
-                                unit : '$'
-                            },
-                            bedroomNum : req.body.bedroomNum,
-                            bathroomNum : req.body.bathroomNum,
-                            lavatoryNum : req.body.lavatoryNum,
-                            houseTypes : [req.body.houseTypes],
-                            builtIn : req.body.builtIn,
-                            areaSize : {
-                                value : req.body.areaSize,
-                                unit : 'sqft'
-                            },
-
-                            // location info
-                            country: country._id,
-                            region: region._id,
-                            city: city._id,
-                            street: req.body.street,
-                            building: req.body.building,
-                            zipCode: req.body.zipCode,
-                            geoLocation: geoLocation
-                        });
-
-                        house.save(function (err) {
-                            if (!err) {
-                                res.redirect('/house/view/' + house._id);                
-                            } else {
-                                res.redirect('/');
-                            }
-                        });
                     }
+                    var geoLocation = {
+                        lat: req.body.lat,
+                        lng: req.body.lng
+                    };
+                    var house = new models.HouseModel({
+                        title : req.body.title,
+                        description : req.body.description,
+                        price : {
+                            value : req.body.price,
+                            unit : '$'
+                        },
+                        bedroomNum : req.body.bedroomNum,
+                        bathroomNum : req.body.bathroomNum,
+                        lavatoryNum : req.body.lavatoryNum,
+                        houseTypes : [req.body.houseTypes],
+                        builtIn : req.body.builtIn,
+                        areaSize : {
+                            value : req.body.areaSize,
+                            unit : 'sqft'
+                        },
+
+                        // location info
+                        country: country._id,
+                        region: region._id,
+                        city: city._id,
+                        street: req.body.street,
+                        building: req.body.building,
+                        zipCode: req.body.zipCode,
+                        geoLocation: geoLocation
+                    });
+
+                    house.save(function (err) {
+                        if (!err) {
+                            res.redirect('/house/view/' + house._id);                
+                        } else {
+                            res.redirect('/');
+                        }
+                    });
                 });
             });
         });

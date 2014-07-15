@@ -30,10 +30,7 @@ modelSchema = BaseSchema.extend({
         ref: 'country'
     },
 
-    street: {
-        required: true,
-        type: String
-    },
+    street: String,
 
     buildingName: String,
 

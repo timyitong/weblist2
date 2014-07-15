@@ -1,5 +1,9 @@
 extends layout
 
+block append head
+    script(src="/javascript/housePost.js")
+    link(rel="stylesheet", type="text/css", href="/css/house/housePost.css")
+
 block content
     div#house_new_form_container
         form(method="POST", action="/house/save", role="form")
@@ -38,15 +42,20 @@ block content
 
             div.form-group
                 label Country
-                input.form-control(type="text", name="country", value="JP")
+                select.form-control(name="country")
+                    option(value="", selected) Select Country
+                    each country in countries
+                        option(value="#{country.code}") #{country.name}
 
             div.form-group
                 label Region
-                input.form-control(type="text", name="region", value="JP-14")
+                select.form-control(name="region", disabled="disabled")
+                    option(value="", selected) Select Region
 
             div.form-group
                 label City
-                input.form-control(type="text", name="city", value="JP-141003")
+                select.form-control(name="city", disabled="disabled")
+                    option(value="", selected) Select City
 
             div.form-group
                 label Street
@@ -61,12 +70,14 @@ block content
                 input.form-control(type="text", name="zipCode")
 
             div.form-group
-                label Latitude
-                input.form-control(type="text", name="lat")
+                input#usemap(type="checkbox", name="usemap")
+                label Use map
 
-            div.form-group
-                label Longitude
-                input.form-control(type="text", name="lng")
+            div.popin(style="display: none")
+                div#map
+
+            input.form-control(type="hidden", name="lat")
+            input.form-control(type="hidden", name="lng")
 
 
 

@@ -13,13 +13,13 @@ var modelSchema;
  */
 modelSchema = LocationSchema.extend({
     title: {
-    	required: true,
-    	type: String
+        required: true,
+        type: String
     },
 
     description: {
-    	required: true,
-    	type: String
+        required: true,
+        type: String
     },
 
     user_id: ObjectId,
