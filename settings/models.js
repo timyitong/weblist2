@@ -1,26 +1,16 @@
 MODEL_PATH = "../models/";
 
-function loadModel(app, modelName) {
-    return require(MODEL_PATH + modelName)(app, modelName);
+function loadModel(modelName) {
+    return require(MODEL_PATH + modelName).model;
 }
 
-module.exports = function(app){
-
-    this.CredentialModel = loadModel(app, 'credential');
-    // Image Model must be initialized before other references
-    this.ImageModel = loadModel(app, 'image');
-
-    this.HouseModel = loadModel(app, 'house');
-
-    this.UserModel = require(MODEL_PATH + 'user').model;
-
-    this.UserProfileModel = loadModel(app, 'userProfile');
-
-    // location models
-    this.LocationModel = loadModel(app, 'location');
-    this.CityModel = loadModel(app, 'city');
-    this.RegionModel = loadModel(app, 'region');
-    this.CountryModel = loadModel(app, 'country');
-    this.ZipCodeModel = loadModel(app, 'zipCode');
-    return this;
-}
+module.exports = {
+    ImageModel: loadModel('image'),
+    HouseModel: loadModel('house'),
+    UserModel: loadModel('user'),
+    UserProfileModel: loadModel('userProfile'),
+    CityModel: loadModel('city'),
+    RegionModel: loadModel('region'),
+    CountryModel: loadModel('country'),
+    ZipCodeModel: loadModel('zipCode')
+};

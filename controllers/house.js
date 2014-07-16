@@ -1,7 +1,7 @@
 module.exports = function(app) {
     var _ = require('underscore');
     var models = app.models;
-    var ObjectId=app.mongoose.Types.ObjectId;
+    var ObjectId = app.mongoose.Types.ObjectId;
 
     app.get('/house/view/:id', function (req, res) {
         return models.HouseModel.findOne({_id: req.params.id},
@@ -12,47 +12,101 @@ module.exports = function(app) {
 
     app.get('/houses', function (req, res) {
         return models.HouseModel.find(function(err, houses) {
-            if (!err) {
-                return res.render('house/list.jade', {houses: houses});
-            }
+            res.format({
+                'text/plain': function() {
+                    if (err) {
+                        res.send(400, { message: 'Error' });
+                    } else {
+                        return res.render('house/list.jade', {houses: houses});
+                    }
+                },
+
+                'text/html': function() {
+                    if (err) {
+                        res.send(400, { message: 'Error' });
+                    } else {
+                        return res.render('house/list.jade', {houses: houses});
+                    }
+                },
+
+                'application/json': function() {
+                    if (err) {
+                        res.send(400, { message: 'Error'});
+                    } else {
+                        res.send({ houses: houses });
+                    }
+                }
+            });
         });
     });
 
     app.get('/house/new', function (req, res) {
         if (req.session.authenticated) {
-            console.log('hit new house page.');
-            res.render('house/new.jade', {});
+            var query = models.CountryModel.find().select('name name_i18n code -_id');
+            query.exec(function (err, countries) {
+                if (err || countries == undefined) {
+                    res.redirect('/');
+                }
+                res.render('house/new.jade', { countries: countries });
+            });
         } else {
             res.redirect('/signin');
         }
     });
 
     app.post('/house/save', function (req, res) {
-        var house = new models.HouseModel({
-            title : req.body.title,
-            description : req.body.description,
-            price : {
-                value : req.body.price,
-                unit : '$'
-            },
-            bedroomNum : req.body.bedroomNum,
-            bathroomNum : req.body.bathroomNum,
-            lavatoryNum : req.body.lavatoryNum,
-            houseTypes : [req.body.houseTypes],
-            builtIn : req.body.builtIn,
-            areaSize : {
-                value : req.body.areaSize,
-                unit : 'sqft'
+        return models.CountryModel.findOne({ code: req.body.country }, function (err, country) {
+            if (err || country == undefined) {
+                return res.send('Country not found');
             }
+            return models.RegionModel.findOne({ code: req.body.region, country_code: req.body.country }, function (err, region) {
+                if (err || region == undefined) {
+                    return res.send('Region not found');
+                }
+                return models.CityModel.findOne({ code: req.body.city, region_code: req.body.region }, function (err, city) {
+                    if (err || city == undefined) {
+                        return res.send('City not found');
+                    }
+                    var geoLocation = {
+                        latitude: req.body.latitude,
+                        longitude: req.body.longitude
+                    };
+                    var house = new models.HouseModel({
+                        title : req.body.title,
+                        description : req.body.description,
+                        price : {
+                            value : req.body.price,
+                            unit : '$'
+                        },
+                        bedroomNum : req.body.bedroomNum,
+                        bathroomNum : req.body.bathroomNum,
+                        lavatoryNum : req.body.lavatoryNum,
+                        houseTypes : [req.body.houseTypes],
+                        builtIn : req.body.builtIn,
+                        areaSize : {
+                            value : req.body.areaSize,
+                            unit : 'sqft'
+                        },
 
-        });
+                        // location info
+                        country: country._id,
+                        region: region._id,
+                        city: city._id,
+                        street: req.body.street,
+                        building: req.body.building,
+                        zipCode: req.body.zipCode,
+                        geoLocation: geoLocation
+                    });
 
-        house.save(function (err) {
-            if (!err) {
-                res.redirect('/house/view/' + house._id);                
-            } else {
-                res.redirect('/');
-            }
+                    house.save(function (err) {
+                        if (!err) {
+                            res.redirect('/house/view/' + house._id);                
+                        } else {
+                            res.redirect('/');
+                        }
+                    });
+                });
+            });
         });
     });
 
@@ -127,5 +181,27 @@ module.exports = function(app) {
         });
     }); 
 
+
+    app.get('/house/:id', function(req, res) {
+        return models.HouseModel.findOne({ _id: req.params.id }, function(err, house) {
+            res.format({
+                'text/plain': function() {
+                    res.send(400, { message: 'Not supported.'});
+                },
+
+                'text/html': function() {
+                    res.send(400, { message: 'Not supported.'});
+                },
+
+                'application/json': function() {
+                    if (err) {
+                        res.send(400, { message: 'Error'});
+                    } else {
+                        res.send({ house: house });
+                    }
+                }
+            });
+        });
+    });
     return this;
 }

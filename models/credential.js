@@ -1,33 +1,36 @@
-module.exports = function(app, modelName) {
-    var mongoose = app.mongoose;    
-    var Schema = mongoose.Schema;
-    var ObjectId= Schema.ObjectId;
-    var bcrypt = app.bcrypt;
+/**
+ * Module dependencies.
+ */
+var mongoose = require('mongoose'),
+    BaseSchema = require('./base').schema,
+    extend = require('mongoose-schema-extend'),
+    bcrypt = require('bcrypt'),
+    MODEL_NAME = 'credential',
+    modelSchema;
 
-    var SchemaConfig = {
-        credential: String,
+/**
+ * Define Schema
+ */
+modelSchema = BaseSchema.extend({
+    credential: String
+});
 
-        createTime: {type: Date, default: Date.now},
-        updateTime: {type: Date},
-    };
+/**
+ * Encrypt password before saving data.
+ */
+modelSchema.pre('save', function(next) {
+    var salt = app.bcrypt.genSaltSync(10);
+    var hash = app.bcrypt.hashSync(this.credential, salt);
+    console.log('Storing credential.');
+    this.credential = hash;
+    next();
+});
 
-    var modelSchema = new Schema(SchemaConfig);
-
-    // Bind events
-    modelSchema.pre('save', function(next, done) {
-        var salt = app.bcrypt.genSaltSync(10);
-        var hash = app.bcrypt.hashSync(this.credential, salt);
-
-        this.credential = hash;
-        now = new Date();
-
-        this.updateTime = now;
-        if ( !this.createTime ) {
-            this.createTime = now;
-        }
-
-        next();
-    });
-
-    return mongoose.model(modelName, modelSchema);
-}
+/**
+ * Expose Schema and model
+ */
+module.exports = {
+    name: MODEL_NAME,
+    schema: modelSchema,
+    model: mongoose.model(MODEL_NAME, modelSchema)
+};

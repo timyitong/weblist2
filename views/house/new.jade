@@ -1,38 +1,81 @@
 extends layout
 
+block append head
+    script(src="/javascript/house/housePost.js")
+
 block content
     div#house_new_form_container
         form(method="POST", action="/house/save", role="form")
-            div.form-group
-                  label Title
-                  input.form-control(type="text", name="title")
 
             div.form-group
-                  label Description
-                  textarea.form-control(name="description")
+                label Title
+                input.form-control(type="text", name="title")
 
             div.form-group
-                  label Price
-                  input.form-control(type="text", name="price")
+                label Description
+                textarea.form-control(name="description")
 
             div.form-group
-                  label Built in
-                  input.form-control(type="text", name="builtIn")
+                label Price
+                input.form-control(type="text", name="price")
 
             div.form-group
-                  label House Types
-                  input.form-control(type="text", name="houseTypes")
+                label Built in
+                input.form-control(type="text", name="builtIn")
 
             div.form-group
-                  label bathroomNum
-                  input.form-control(type="text", name="bathroomNum")
+                label House Types
+                input.form-control(type="text", name="houseTypes")
 
             div.form-group
-                  label bedroomNum
-                  input.form-control(type="text", name="bedroomNum")                              
+                label bathroomNum
+                input.form-control(type="text", name="bathroomNum")
 
             div.form-group
-                  label areaSize
-                  input.form-control(type="text", name="areaSize")
+                label bedroomNum
+                input.form-control(type="text", name="bedroomNum")
+
+            div.form-group
+                label areaSize
+                input.form-control(type="text", name="areaSize")
+
+            div.form-group
+                label Country
+                select.form-control(name="country")
+                    option(value="", selected) Select Country
+                    each country in countries
+                        option(value="#{country.code}") #{country.name}
+
+            div.form-group
+                label Region
+                select.form-control(name="region", disabled="disabled")
+                    option(value="", selected) Select Region
+
+            div.form-group
+                label City
+                select.form-control(name="city", disabled="disabled")
+                    option(value="", selected) Select City
+
+            div.form-group
+                label Street
+                input.form-control(type="text", name="street")
+
+            div.form-group
+                label Building Name (optional)
+                input.form-control(type="text", name="building")
+
+            div.form-group
+                label Zip Code
+                input.form-control(type="text", name="zipCode")
+
+            div.form-group
+                input#usemap(type="checkbox", name="usemap")
+                label Use map
+
+            div.popin(style="display: none")
+                div#map
+
+            input.form-control(type="hidden", name="latitude")
+            input.form-control(type="hidden", name="longitude")
 
             input(type="submit", class="btn btn-lg btn-primary")

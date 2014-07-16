@@ -1,8 +1,14 @@
 extends layout
 
+block append head
+    script(src="/javascript/house/houseList.js")
+
 block content
     each house in houses
         a(href="/house/view/#{house._id}") #{house.title}
         span |
         a(href="/house/delete/#{house._id}") del
-        br 
+        br
+
+    div.popin
+        div#map
