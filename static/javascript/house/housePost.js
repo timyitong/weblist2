@@ -38,16 +38,16 @@ $(function() {
                         } else {
                             locationMap.setCenter(latlng.lat(), latlng.lng());
                         }
-                        $('input[name=lat]').val(latlng.lat());
-                        $('input[name=lng]').val(latlng.lng());
+                        $('input[name=latitude]').val(latlng.lat());
+                        $('input[name=longitude]').val(latlng.lng());
                         locationMap.removeMarkers();
                         locationMap.addMarker({
                             lat: latlng.lat(),
                             lng: latlng.lng(),
                             draggable: true,
                             dragend: function(e) {
-                                $('input[name=lat]').val(e.latLng.k);
-                                $('input[name=lng]').val(e.latLng.B);
+                                $('input[name=latitude]').val(e.latLng.k);
+                                $('input[name=longitude]').val(e.latLng.B);
                             }
                         });
                     }

@@ -10,30 +10,34 @@ $(function() {
         url: '/houses',
         success: function(data) {
             var houses = data.houses;
-            var len = houses.length;
-            var midLat = 0;
-            var midLng = 0;
-            var houseGeos = [];
-            for (var i = 0; i < len; i++) {
-                if (houses[i].geoLocation != undefined) {
-                    houseGeos.push(houses[i]);
-                    midLat += parseFloat(houses[i].geoLocation.lat);
-                    midLng += parseFloat(houses[i].geoLocation.lng);
+            if (houses.length) {
+                var len = houses.length;
+                var midLatitude = 0;
+                var midLongitude = 0;
+                var houseGeos = [];
+                for (var i = 0; i < len; i++) {
+                    if (houses[i].geoLocation != undefined) {
+                        houseGeos.push(houses[i]);
+                        midLatitude += parseFloat(houses[i].geoLocation.latitude);
+                        midLongitude += parseFloat(houses[i].geoLocation.longitude);
+                    }
                 }
-            }
-            midLat = midLat / houseGeos.length;
-            midLng = midLng / houseGeos.length;
-            locationMap = new GMaps({
-                div: '#map',
-                lat: midLat,
-                lng: midLng
-            });
-            var len = houseGeos.length;
-            for (var i = 0; i < len; i++) {
-                locationMap.addMarker({
-                    lat: houseGeos[i].geoLocation.lat,
-                    lng: houseGeos[i].geoLocation.lng
-                });
+                if (houseGeos.length) {
+                    midLatitude = midLatitude / houseGeos.length;
+                    midLongitude = midLongitude / houseGeos.length;
+                    locationMap = new GMaps({
+                        div: '#map',
+                        lat: midLatitude,
+                        lng: midLongitude
+                    });
+                    var len = houseGeos.length;
+                    for (var i = 0; i < len; i++) {
+                        locationMap.addMarker({
+                            lat: houseGeos[i].geoLocation.latitude,
+                            lng: houseGeos[i].geoLocation.longitude
+                        });
+                    }
+                }
             }
         }
     });

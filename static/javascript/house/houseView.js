@@ -12,12 +12,12 @@ $(function() {
             var geoLocation = data.house.geoLocation;
             locationMap = new GMaps({
                 div: '#map',
-                lat: geoLocation.lat,
-                lng: geoLocation.lng
+                lat: geoLocation.latitude,
+                lng: geoLocation.longitude
             });
             locationMap.addMarker({
-                lat: geoLocation.lat,
-                lng: geoLocation.lng
+                lat: geoLocation.latitude,
+                lng: geoLocation.longitude
             });
         }
     });

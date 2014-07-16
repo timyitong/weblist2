@@ -68,8 +68,8 @@ module.exports = function(app) {
                         return res.send('City not found');
                     }
                     var geoLocation = {
-                        lat: req.body.lat,
-                        lng: req.body.lng
+                        latitude: req.body.latitude,
+                        longitude: req.body.longitude
                     };
                     var house = new models.HouseModel({
                         title : req.body.title,

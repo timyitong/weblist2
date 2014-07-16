@@ -40,8 +40,8 @@ modelSchema = BaseSchema.extend({
     zipCode: String,
 
     geoLocation: {
-        lat: String,
-        lng: String
+        latitude: String,
+        longitude: String
     }
 });
 
