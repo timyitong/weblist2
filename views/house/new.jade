@@ -2,7 +2,6 @@ extends layout
 
 block append head
     script(src="/javascript/house/housePost.js")
-    link(rel="stylesheet", type="text/css", href="/css/house/housePost.css")
 
 block content
     div#house_new_form_container
@@ -78,7 +77,5 @@ block content
 
             input.form-control(type="hidden", name="latitude")
             input.form-control(type="hidden", name="longitude")
-
-
 
             input(type="submit", class="btn btn-lg btn-primary")
