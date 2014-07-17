@@ -65,14 +65,16 @@ module.exports = function(app) {
             if (password != req.body.password2) {
                 res.send({"message": "Password unmatched."});
             } else {
-                app.models.UserModel.findOneAndUpdate({_id: ObjectId(req.session.uid)}
-                    , { $set: {password: password} }
-                    , function (err, user) {
-                        // TODO a potential bug: not sending any response
-                        console.log("password changed");
-                        console.log(err);
-                    }
-                );
+                app.models.UserModel.findOne({ _id: ObjectId(req.session.uid) }, function(err, user) {
+                    user.password = password;
+                    user.save(function(err) {
+                        if (!err) {
+                            console.log('password updated.');
+                        } else {
+                            console.log(err);
+                        }
+                    });
+                });
             }
         }
 
