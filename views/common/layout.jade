@@ -11,12 +11,15 @@ html(lang="en")
         // javascripts lib
         script(src="/javascript/lib/jquery-2.1.0.min.js")
         script(src="/javascript/lib/bootstrap-3.1.1.min.js")
-        script(src="/javascript/lib/handlebars-1.1.2.js")
-        script(src="/javascript/lib/ember-1.6.0.js")
+        script(src="/javascript/lib/underscore-1.6.0.min.js")
+        script(src="/javascript/lib/backbone-1.1.2.min.js")
+        // Not using ember:
+        //- script(src="/javascript/lib/handlebars-1.1.2.js")
+        //- script(src="/javascript/lib/ember-1.6.0.js")
         block head
     body
         include ../include/_navbar
-        div#wrap
+        div#wrap.page-container
             div#container.container-fluid
                 block content
             div#push

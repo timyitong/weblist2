@@ -2,6 +2,7 @@ module.exports = function(app) {
     var _ = require('underscore');
     var models = app.models;
     var ObjectId = app.mongoose.Types.ObjectId;
+    var bcrypt = require('bcrypt');
 
     app.post('/signin', function (req, res) {
         return models.UserModel.findOne({ email: req.body.email }, function(err, user) {
@@ -10,15 +11,29 @@ module.exports = function(app) {
             }
             if (user == undefined) {
                 console.log('email not found');
-                return res.send('Email address not found.');                
-            } else if (app.bcrypt.compareSync(req.body.password,user.password)){
-                console.log('login success');
+                return res.render('user/login.jade', {message: 'Email address not found.'});                
+            } else if (app.bcrypt.compareSync(req.body.password, user.password)){
                 req.session.uid = user._id;
-                res.cookie('uid', user._id, {maxAge: 365 * 24 * 60 * 60 * 1000})
-                return res.render('home/index.jade', { message: 'Login success.' });
+                res.cookie('uid', user._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
+
+                return models.UserProfileModel.findOne({userId: ObjectId(user._id)}, function(err, profile) {
+                    if (!err) {
+                        console.log('login success');
+                        
+                        req.session.username = profile.username;
+                        res.cookie('username', profile.username, {maxAge: 365 * 24 * 60 * 60 * 1000});
+
+                        req.session.avatar = profile.avatar;
+                        res.cookie('avatar', profile.avatar, {maxAge: 365 * 24 * 60 * 60 * 1000});
+                        return res.redirect('/');
+                    } else {
+                        console.log("profile cannot find.");
+                        return res.send('cannot find profile.');
+                    }
+                })
             } else {
                 console.log('password does not match');
-                return res.send('Password Not Matched');
+                return res.render('user/login.jade', {message: 'Password Not Matched'});
             }
         });
     });
@@ -65,6 +80,10 @@ module.exports = function(app) {
             if (password != req.body.password2) {
                 res.send({"message": "Password unmatched."});
             } else {
+                var salt = bcrypt.genSaltSync(10);
+                var hashedPassword = bcrypt.hashSync(password, salt);
+                password = hashedPassword;
+
                 app.models.UserModel.findOneAndUpdate({_id: ObjectId(req.session.uid)}
                     , { $set: {password: password} }
                     , function (err, user) {
@@ -82,7 +101,7 @@ module.exports = function(app) {
                 , { $set: { username: req.body.username
                           }
                   }, function (err, profile) {
-                    res.redirect('/user/view');
+                    res.redirect('/user');
                 }
             );
         }
@@ -138,7 +157,7 @@ module.exports = function(app) {
                                         }
                               }
                       }, function (err, profile) {
-                        res.redirect('/user/view/' + profile.userId);
+                        res.redirect('/user/' + profile.userId);
                     }
                 );
             });
@@ -147,11 +166,11 @@ module.exports = function(app) {
         }
     });
 
-    app.get('/user/view', function (req, res) {
-        return res.redirect('/user/view/' + req.session.uid);
+    app.get('/user', function (req, res) {
+        return res.redirect('/user/' + req.session.uid);
     });
 
-    app.get('/user/view/:id', function (req, res) {
+    app.get('/user/:id', function (req, res) {
         var uid = req.params.id;
         if (uid == undefined) {
             if (req.session.uid == undefined) {
@@ -220,6 +239,21 @@ module.exports = function(app) {
 
     app.get('/signup', function (req, res) {
         res.render("user/signup.jade", {});
+    });
+
+    app.get('/user/:id/collectionList', function(req, res) {
+        return models.UserCollectionListModel.findOne({userId: ObjectId(req.params.id)}, function (err, list) {
+            if (list) {
+                return res.send(list);
+            } else {
+                console.log(err);
+                return res.send({message: "error"});
+            }
+        });
+    });
+
+    app.post('/user/collectionList', function(req, res) {
+
     });
 
 

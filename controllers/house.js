@@ -2,16 +2,17 @@ module.exports = function(app) {
     var _ = require('underscore');
     var models = app.models;
     var ObjectId = app.mongoose.Types.ObjectId;
-
-    app.get('/house/view/:id', function (req, res) {
-        return models.HouseModel.findOne({_id: req.params.id},
-                                        function(err, house){
-                    res.render('house/view.jade', {house: house});
-                });
-    });
+    var stringUtils = require('../utils/stringUtils');
 
     app.get('/houses', function (req, res) {
-        return models.HouseModel.find(function(err, houses) {
+        var query = {};
+
+        // TODO a simple one keyword search support, should switch to SE solutions, later on
+        if (req.query.keyword) {
+            query.title = new RegExp(req.query.keyword, 'i');
+        }
+
+        return models.HouseModel.find(query, function(err, houses) {
             res.format({
                 'text/plain': function() {
                     if (err) {
@@ -54,7 +55,7 @@ module.exports = function(app) {
         }
     });
 
-    app.post('/house/save', function (req, res) {
+    app.post('/house', function (req, res) {
         return models.CountryModel.findOne({ code: req.body.country }, function (err, country) {
             if (err || country == undefined) {
                 return res.send('Country not found');
@@ -72,7 +73,7 @@ module.exports = function(app) {
                         longitude: req.body.longitude
                     };
                     var house = new models.HouseModel({
-                        title : req.body.title,
+                        title : stringUtils.toTitleCase(req.body.title),
                         description : req.body.description,
                         price : {
                             value : req.body.price,
@@ -100,7 +101,7 @@ module.exports = function(app) {
 
                     house.save(function (err) {
                         if (!err) {
-                            res.redirect('/house/view/' + house._id);                
+                            res.redirect('/house/' + house._id);                
                         } else {
                             res.redirect('/');
                         }
@@ -161,7 +162,7 @@ module.exports = function(app) {
                                          } 
                                }
                     }, function (err, house) {
-                        res.redirect('/house/view/' + house._id);
+                        res.redirect('/house/' + house._id);
                     }
                 );
             });
@@ -184,13 +185,16 @@ module.exports = function(app) {
 
     app.get('/house/:id', function(req, res) {
         return models.HouseModel.findOne({ _id: req.params.id }, function(err, house) {
+            // Sanitize House data
+            house.description = stringUtils.toHtmlParagraph(house.description);
+
             res.format({
                 'text/plain': function() {
-                    res.send(400, { message: 'Not supported.'});
+                    res.render('house/view.jade', {house: house});
                 },
 
                 'text/html': function() {
-                    res.send(400, { message: 'Not supported.'});
+                    res.render('house/view.jade', {house: house});
                 },
 
                 'application/json': function() {
@@ -203,5 +207,6 @@ module.exports = function(app) {
             });
         });
     });
+
     return this;
 }

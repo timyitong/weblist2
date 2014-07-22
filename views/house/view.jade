@@ -4,33 +4,33 @@ block append head
     script(src="/javascript/house/houseView.js")
 
 block content
-    div.container
+    div
         div.row.border-bottom
-            div.col-md-6(style="height:75px;")
+            div.col-md-6(style="height:auto;")
                 div.house-title
                     div(style="width:100%;")
                         span.h4 #{house.title}
-                    div(style="width:100%;margin-top:5px;")
+                    div(style="width:100%;")
                         each houseType in house.houseTypes
-                            div.btn.btn-success.btn-sm #{houseType}
-            div.col-md-5.col-md-offset-1
+                            div.tag #{houseType}
+            div.col-md-5
                 div.house-info-box
                     div.house-info-num.text-center #{house.price.unit}#{house.price.value}
-                    div.house-info-name.text-center Price
+                    div.house-info-name.text-center 価格
                 div.house-info-box
                     div.house-info-num.text-center #{house.bedroomNum}
-                    div.house-info-name.text-center Bedroom#{house.bedroomNum > 1 ? 's' : ''}
+                    div.house-info-name.text-center ベッドルーム#{house.bedroomNum > 1 ? 's' : ''}
                 div.house-info-box
                     div.house-info-num.text-center #{house.bathroomNum}
-                    div.house-info-name.text-center Bathroom#{house.bathroomNum > 1 ? 's' : ''}
+                    div.house-info-name.text-center バスルーム#{house.bathroomNum > 1 ? 's' : ''}
                 div.house-info-box
                     div.house-info-num.text-center #{house.areaSize.value}
                     div.house-info-name.text-center #{house.areaSize.unit}
-        div.row
-            div.border-bottom.image-box
+        div.row(style="margin-bottom: 10px;")
+            div.image-box.border-bottom.col-md-4
                 div.image-large-box
                     if house.images.length > 0
-                        img(src="/uploads/#{house.images[0]._id}/large#{house.images[0].extension}", image-id="#{house.images[0]._id}")
+                        img(width="500", src="/uploads/#{house.images[0]._id}/large#{house.images[0].extension}", image-id="#{house.images[0]._id}")
                     else
                         img(src="/uploads/default/large.jpg")
                 div.image-small-box
@@ -42,12 +42,16 @@ block content
                             else
                                 li.image-slideshow
                                     img(src="/uploads/#{image._id}/small#{image.extension}", image-id="#{image._id}")
-            div.popin
-                div#map
+
         div.row
             div.col-xs-12
-                span.h4 Description
-                p(style="font-size:14px;") #{house.description}
+                span.h4(style="border-bottom:1px solid #333; margin-bottom: 10px;") 簡単な紹介
+                div(style="margin-top: 10px;")
+                    p(style="font-size:14px;line-height: 21px;") !{house.description}
+        
+        div.row
+            div.popin.col-md-4(style="margin-top: 25px;")
+                div#map
 
         br
         br

@@ -6,40 +6,46 @@ html {
 /* line 8, ../../saas/share/main.scss */
 body {
   height: 100%;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "MS PGothic", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: #f0f0f0 url(/images/bk.gif);
 }
 
-/* line 13, ../../saas/share/main.scss */
+/* line 14, ../../saas/share/main.scss */
 #wrap {
   min-height: 100%;
   height: auto !important;
-  margin: 0 auto -60px;
+  margin: 0 auto;
 }
 
 /* line 19, ../../saas/share/main.scss */
+.page-container {
+  width: 1045px;
+}
+
+/* line 23, ../../saas/share/main.scss */
 #push {
   height: 60px;
 }
 
 /* For footer*/
-/* line 24, ../../saas/share/main.scss */
+/* line 28, ../../saas/share/main.scss */
 #footer {
   background-color: #f5f5f5;
   height: 60px;
 }
 
-/* line 29, ../../saas/share/main.scss */
+/* line 33, ../../saas/share/main.scss */
 .muted {
   color: #999999;
 }
 
-/* line 33, ../../saas/share/main.scss */
+/* line 37, ../../saas/share/main.scss */
 .footbar {
   margin: 20px auto;
   max-width: 680px;
 }
 
-/* line 38, ../../saas/share/main.scss */
+/* line 42, ../../saas/share/main.scss */
 .footer-item {
   float: left;
   width: auto;
@@ -48,27 +54,61 @@ body {
   margin-right: 10px;
 }
 
-/* line 46, ../../saas/share/main.scss */
+/* line 50, ../../saas/share/main.scss */
 .footer-item a {
   color: #999999;
 }
 
-/* line 50, ../../saas/share/main.scss */
+/* line 54, ../../saas/share/main.scss */
 .footer-item a:hover {
   text-decoration: none;
   color: #2a6496;
 }
 
-/* line 55, ../../saas/share/main.scss */
+/* line 59, ../../saas/share/main.scss */
 #footer .splitter {
   float: left;
 }
 
-/* line 59, ../../saas/share/main.scss */
+/* line 63, ../../saas/share/main.scss */
 .border-bottom {
   border-width: 0 0 1px 0;
   border-style: solid;
   border-color: #eee;
-  margin-bottom: 7px;
-  padding-bottom: 7px;
+}
+
+/* line 69, ../../saas/share/main.scss */
+.navbar a {
+  color: #26453D;
+}
+
+/* line 73, ../../saas/share/main.scss */
+.navbar {
+  font-weight: 500;
+  padding-right: 50px;
+}
+/* line 76, ../../saas/share/main.scss */
+.navbar li {
+  min-width: 50px;
+}
+
+/* line 81, ../../saas/share/main.scss */
+.nav-icon {
+  padding-top: 6px;
+}
+
+/* line 85, ../../saas/share/main.scss */
+.border-grey {
+  border: 1px solid #d9e0e2;
+}
+
+/* line 89, ../../saas/share/main.scss */
+.tag {
+  background-color: #58B2DC;
+  color: #fff;
+  margin: 5px 10px 5px 0px;
+  font-size: 10px;
+  width: auto;
+  padding: 5px;
+  display: inline-block;
 }

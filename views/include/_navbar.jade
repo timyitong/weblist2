@@ -1,45 +1,75 @@
 div.container-full
-    nav.navbar(role="navigation")
+    nav.navbar(role="navigation", style="height:30px; background: #fff;").border-bottom
         // Brand
         div.navbar-header
-            a.navbar-brand(href="/") Kajiban
+            a.navbar-brand(href="/") HuchiHuchi
         div.collapse.navbar-collapse
             // Left menu
-            ul.nav.navbar-nav
-                li
-                    a(href="/houses") House
-                li
-                    a(href="#") Car
-                li
-                    a(href="#") Used Sales
-                li
-                    a(href="#") TODO
-            // Search bar
-            //- div.col-md-4
-            //-     form.navbar-form.navbar-left(role="search")
-            //-         div.input-group
-            //-             input.form-control(type="text", placeholder="Search")
-            //-             span.input-group-btn
-            //-                 button.btn.btn-success(type="submit") Search
+            //- ul.nav.navbar-nav
+            //-     li
+            //-         a(href="/houses") 賃借
+            //-     li
+            //-         a(href="/houses") 買う
+            //-     li
+            //-         a(href="#") 中古車
+            //-     li
+            //-         a(href="#") グッズ
+            //-     li
+            //-         a(href="#") 神馬
             // Right menu
             ul.nav.navbar-nav.navbar-right
-                li
-                    a(href="/house/new") + House Post
-
-                - if (session.authenticated)
+                - if (session.uid && session.avatar)
+                    li
+                        a(href="/user", style="padding-top: 10px;height: 50px;")
+                            img(height="30", src="/uploads/#{session.avatar._id}/mini#{session.avatar.extension}")
                     li.dropdown
-                        a.dropdown-toggle(href="#", data-toggle="dropdown") [Username]
+                        a.dropdown-toggle(href="#", data-toggle="dropdown") #{session.username}
                             b.caret
                         ul.dropdown-menu
                             li
-                                a(href="/user/view") Me
+                                a(href="/user") Me
                             li
                                 a(href="/user/edit") Edit Profile
                             li.divider
                             li
-                                a(href="/signout") Sign out
+                                a(href="/signout")
+                                    span Sign Out
+                    li.nav-icon
+                        span.glyphicon.glyphicon-envelope.btn-lg
                 - else
                     li
                         a(href="/signin") Sign in
                     li
                         a(href="/signup") Sign up
+
+                li.nav-icon.dropdown
+                    span.dropdown-toggle.glyphicon.glyphicon-edit.btn-lg(data-toggle="dropdown")
+                    ul.dropdown-menu
+                        li
+                            a(href="/house/new") + House Post
+                        li
+                            a(href="#") + Car Post
+                        li
+                            a(href="#") + Used Item Post
+div.container-full(style=" width:100%; margin-top: -10px; background: #A5DEE4; margin-bottom: 20px;")
+        nav.navbar
+            div.collapse.navbar-collapse
+                // Left menu
+                ul.nav.navbar-nav(style="margin-left:85px;")
+                    li
+                        a(href="/houses") 賃借
+                    li
+                        a(href="/houses") 買う
+                    li
+                        a(href="#") 中古車
+                    li
+                        a(href="#") グッズ
+                    li
+                        a(href="#") 神馬
+                //- div.col-md-4
+                //-     form.navbar-form.navbar-left(role="search")
+                //-         div.input-group
+                //-             input.form-control(type="text", style="border-radius:3px;width: 300px;margin-left: 140px", placeholder="Search")
+                            //- span.input-group-btn
+                            //-     button.btn.btn-success(type="submit") Search
+

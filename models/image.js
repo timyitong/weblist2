@@ -23,7 +23,7 @@ modelSchema = BaseSchema.extend({
         default: [
             {
                 name: 'large',
-                size: 600
+                size: 500
             },
             {
                 name: 'medium',

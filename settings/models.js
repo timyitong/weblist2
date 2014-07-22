@@ -9,6 +9,7 @@ module.exports = {
     HouseModel: loadModel('house'),
     UserModel: loadModel('user'),
     UserProfileModel: loadModel('userProfile'),
+    UserCollectionListModel: loadModel('userCollectionList'),
     CityModel: loadModel('city'),
     RegionModel: loadModel('region'),
     CountryModel: loadModel('country'),
