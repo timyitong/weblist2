@@ -1,25 +1,20 @@
-/**
- * Module dependencies.
- */
-var mongoose = require('mongoose'),
-    BaseSchema = require('./base').schema,
-    extend = require('mongoose-schema-extend'),
-    bcrypt = require('bcrypt'),
-    MODEL_NAME = 'user',
-    modelSchema;
+// SCHEMA - user
+// !This table stores email/password, should never be rendered.
 
-/**
- * Define Schema
- */
-modelSchema = BaseSchema.extend({
+// Module Dependencies
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+var bcrypt = require('bcrypt');
+
+// Define schema
+var schema = new Schema({
     email: String,
     password: String,
+    profile: {type: Schema.Types.ObjectId, ref: 'userProfile'} 
 });
 
-/**
- * Encrypt password before saving data.
- */
-modelSchema.pre('save', function(next) {
+// Encrypt password before saving data.
+schema.pre('save', function(next) {
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(this.password, salt);
     console.log('Storing password');
@@ -27,11 +22,4 @@ modelSchema.pre('save', function(next) {
     next();
 });
 
-/**
- * Expose Schema and model
- */
-module.exports = {
-    name: MODEL_NAME,
-    schema: modelSchema,
-    model: mongoose.model(MODEL_NAME, modelSchema)
-};
+module.exports = schema;

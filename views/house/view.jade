@@ -53,6 +53,19 @@ block content
             div.popin.col-md-4(style="margin-top: 25px;")
                 div#map
 
+        div.row
+            div.col-xs-12
+                span.h4(style="border-bottom:1px solid #333; margin-bottom: 10px;") コメント
+            form(method="POST", action="/house/comment")
+                input(type="text", name="text")
+                input(type="hidden", name="parentId", value="#{house._id}")
+                input(type="submit", value="コメント")
+        if house.comments
+            each comment in house.comments
+                if comment.fromUser
+                    span #{comment.fromUser.username}
+                h3 #{comment.text}
+
         br
         br
         br

@@ -1,30 +1,21 @@
-/**
- * Module dependencies.
- */
-var mongoose = require('mongoose');
-var ObjectId = mongoose.Schema.ObjectId;
-var BaseSchema = require('./base').schema;
-var extend = require('mongoose-schema-extend');
-var MODEL_NAME = 'userProfile';
-var modelSchema;
+// SCHEMA - userProfile
 
-/**
- * Define Schema
- */
-modelSchema = BaseSchema.extend({
-    userId: ObjectId,
+// Module dependencies.
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+var ObjectId = Schema.Types.ObjectId;
+
+
+// Define Schema
+var schema = new Schema({
+    userId: {type: Number, ref: 'user'},
     username: String,
     avatar: {
+        type: {
         _id: ObjectId,
         extension: String
+        }
     }
 });
 
-/**
- * Expose Schema and model
- */
-module.exports = {
-    name: MODEL_NAME,
-    schema: modelSchema,
-    model: mongoose.model(MODEL_NAME, modelSchema)
-};
+module.exports = schema;

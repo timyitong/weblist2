@@ -18,10 +18,11 @@ div.container-full
             //-         a(href="#") 神馬
             // Right menu
             ul.nav.navbar-nav.navbar-right
-                - if (session.uid && session.avatar)
+                - if (session.uid)
                     li
                         a(href="/user", style="padding-top: 10px;height: 50px;")
-                            img(height="30", src="/uploads/#{session.avatar._id}/mini#{session.avatar.extension}")
+                            if (session.avatar)
+                                img(height="30", src="/uploads/#{session.avatar._id}/mini#{session.avatar.extension}")
                     li.dropdown
                         a.dropdown-toggle(href="#", data-toggle="dropdown") #{session.username}
                             b.caret

@@ -1,6 +1,4 @@
-// SCHEMA - userCollectionList
-
-// TODO we can improve this via populate
+// SCHEMA - comment
 
 /**
  * Module dependencies.
@@ -8,17 +6,15 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
-var schema;
 
 /**
  * Define Schema
  */
 var schema = new Schema({
-    userId: Number,
-    collectionList: [{
-        typeName: {type: String, enum: ['house', 'item', 'car']},
-        collectionId: ObjectId
-    }]
+    parentId : ObjectId,
+    fromUser : {type: ObjectId, ref: 'userProfile'},
+    toUser : {type: ObjectId, ref: 'userProfile'},
+    text : String
 });
 
 /**

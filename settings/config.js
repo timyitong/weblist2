@@ -27,11 +27,6 @@ module.exports = function(app, express){
             showStack:  true
         }));
 
-        // @deprecated        
-        // app.use(express.bodyParser({
-        //     keepExtensions:  true,
-        //     uploadDir:  "./static/uploads"
-        // }));
         app.use(express.urlencoded());
         app.use(express.json());
 
@@ -56,7 +51,10 @@ module.exports = function(app, express){
     });
 
     // DB Config
-    app.mongoose.connect('mongodb://localhost:27017/weblist2');
+    var connection = app.mongoose.connect('mongodb://localhost:27017/weblist2');
+    // Init schema table for mongoose-auto-increment
+    var autoIncrement = require('mongoose-auto-increment');
+    autoIncrement.initialize(connection);
 
     return config;
 }

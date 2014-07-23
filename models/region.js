@@ -3,9 +3,8 @@
  */
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Schema.ObjectId;
-var BaseSchema = require('./base').schema;
+var BaseSchema = require('./base');
 var extend = require('mongoose-schema-extend');
-var MODEL_NAME = 'region';
 var modelSchema;
 
 /**
@@ -39,8 +38,4 @@ modelSchema = BaseSchema.extend({
 /**
  * Expose Schema and model
  */
-module.exports = {
-    name: MODEL_NAME,
-    schema: modelSchema,
-    model: mongoose.model(MODEL_NAME, modelSchema)
-};
+module.exports = modelSchema;

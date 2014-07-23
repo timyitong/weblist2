@@ -184,7 +184,7 @@ module.exports = function(app) {
 
 
     app.get('/house/:id', function(req, res) {
-        return models.HouseModel.findOne({ _id: req.params.id }, function(err, house) {
+        return models.HouseModel.findOne({ _id: req.params.id }).populate('comments.fromUser').exec(function(err, house) {
             // Sanitize House data
             house.description = stringUtils.toHtmlParagraph(house.description);
 
@@ -205,6 +205,40 @@ module.exports = function(app) {
                     }
                 }
             });
+        });
+    });
+
+    app.post('/house/comment', function (req, res) {
+        return models.HouseModel.findOne({_id: ObjectId(req.body.parentId)}, function(err, house) {
+            if (house) {
+                console.log(req.session.uid);
+                house.comments.push({parentId: house._id, fromUser: ObjectId(req.session.uid), text: req.body.text});
+
+                house.save(function (err, house) {
+                  if (err) {
+
+                  } else {
+                    res.format({
+                        'text/plain': function() {
+                            res.redirect('/house/'+house._id);
+                        },
+
+                        'text/html': function() {
+                            res.redirect('/house/'+house._id);
+                        },
+
+                        'application/json': function() {
+                            if (err) {
+                                res.send(400, { message: 'Error'});
+                            } else {
+                                res.send({ house: house });
+                            }
+                        }
+                    });
+                  }
+
+                });
+            }
         });
     });
 

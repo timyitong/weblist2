@@ -1,7 +1,8 @@
 module.exports = function(app) {
     var _ = require('underscore');
     var models = app.models;
-    var ObjectId = app.mongoose.Types.ObjectId;
+    var Schema = app.mongoose.Schema;
+    var ObjectId = Schema.Types.ObjectId;
     var bcrypt = require('bcrypt');
 
     app.post('/signin', function (req, res) {
@@ -16,7 +17,7 @@ module.exports = function(app) {
                 req.session.uid = user._id;
                 res.cookie('uid', user._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
 
-                return models.UserProfileModel.findOne({userId: ObjectId(user._id)}, function(err, profile) {
+                return models.UserProfileModel.findOne({userId: user._id}, function(err, profile) {
                     if (!err) {
                         console.log('login success');
                         
@@ -55,15 +56,10 @@ module.exports = function(app) {
             return res.redirect("/signin");
         }
 
-        return models.UserModel.findById({_id: ObjectId(req.session.uid)}, function (err, user) {
+        return models.UserModel.findById({_id: req.session.uid}).populate('profile').exec(function (err, user) {
             if (!err) {
-                models.UserProfileModel.findOne({userId: ObjectId(user._id)}, function (err, profile) {
-                    if (!err) {
-                        return res.render('user/edit.jade', {user: user, profile: profile});                        
-                    } else {
-                        return res.redirect('/');
-                    }
-                });
+                console.log(user);
+                return res.render('user/edit.jade', {user: user});                        
             } else {
                 return res.redirect('/');
             }
@@ -84,7 +80,7 @@ module.exports = function(app) {
                 var hashedPassword = bcrypt.hashSync(password, salt);
                 password = hashedPassword;
 
-                app.models.UserModel.findOneAndUpdate({_id: ObjectId(req.session.uid)}
+                app.models.UserModel.findOneAndUpdate({_id: req.session.uid}
                     , { $set: {password: password} }
                     , function (err, user) {
                         // TODO a potential bug: not sending any response
@@ -97,7 +93,7 @@ module.exports = function(app) {
 
         if (req.body.username != undefined) {
             models.UserProfileModel.findOneAndUpdate(
-                  { userId: ObjectId(req.session.uid) }
+                  { userId: req.session.uid }
                 , { $set: { username: req.body.username
                           }
                   }, function (err, profile) {
@@ -151,7 +147,7 @@ module.exports = function(app) {
                 });
                 // Save Avatar to Profile
                 models.UserProfileModel.findOneAndUpdate(
-                      { userId: ObjectId(uid) }
+                      { userId: uid }
                     , { $set: { avatar: { _id: image._id,
                                           extension: image.extension
                                         }
@@ -180,11 +176,9 @@ module.exports = function(app) {
             }
         }
 
-        models.UserModel.findOne({_id: ObjectId(uid)}, function (err, user) {
+        models.UserProfileModel.findOne({userId: uid}, function (err, profile) {
             if (!err) {
-                return models.UserProfileModel.findOne({userId: user._id}, function (err, profile) {
-                    res.render('user/view.jade', {user: user, profile: profile, canEdit: uid == req.session.uid});
-                });
+                return res.render('user/view.jade', {profile: profile, canEdit: uid == req.session.uid});
             } else {
                 return res.redirect('/');
             }
@@ -200,7 +194,7 @@ module.exports = function(app) {
             if (user == undefined) {
                 var newUser = new models.UserModel({
                     email: req.body.email,
-                    password: req.body.password,
+                    password: req.body.password
                 });
 
                 // Save Basic user information 
@@ -208,7 +202,6 @@ module.exports = function(app) {
                     if (!err) {
                         req.session.uid = newUser._id;
                         res.cookie('uid', newUser._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
 
                         // Build user profile
                         var atPosition = newUser.email.indexOf('@');
@@ -218,8 +211,19 @@ module.exports = function(app) {
                             userId: newUser._id
                         });
                         // Save user profile 
-                        return profile.save(function (err) {
-                            res.redirect('/');
+                        return profile.save(function (err, profile) {
+                            newUser.profile = profile._id;
+                            // Save user's ref to profile
+                            newUser.save(function (err) {
+                                req.session.username = profile.username;
+                                res.cookie('username', profile.username, {maxAge: 365 * 24 * 60 * 60 * 1000});
+
+
+                                // Set Avatar
+                                req.session.avatar = profile.avatar;
+                                res.cookie('avatar', profile.avatar, {maxAge: 365 * 24 * 60 * 60 * 1000});
+                                res.redirect('/');
+                            });
                         });
                     } else {
                         return res.render(
@@ -242,7 +246,7 @@ module.exports = function(app) {
     });
 
     app.get('/user/:id/collectionList', function(req, res) {
-        return models.UserCollectionListModel.findOne({userId: ObjectId(req.params.id)}, function (err, list) {
+        return models.UserCollectionListModel.findOne({userId: req.params.id}, function (err, list) {
             if (list) {
                 return res.send(list);
             } else {

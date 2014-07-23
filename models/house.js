@@ -1,17 +1,19 @@
+// SCHEMA - house
+
 /**
  * Module dependencies.
  */
 var mongoose = require('mongoose');
-var ObjectId = mongoose.Schema.ObjectId;
-var LocationSchema = require('./location').schema;
-var extend = require('mongoose-schema-extend');
-var MODEL_NAME = 'house';
-var modelSchema;
+var Schema = mongoose.Schema;
+var ObjectId = Schema.Types.ObjectId;
+// TODO fix location dependencies
+// var LocationSchema = require('./location');
+var CommentSchema = require('./comment');
 
 /**
  * Define Schema
  */
-modelSchema = LocationSchema.extend({
+var schema = new Schema({
     title: {
         required: true,
         type: String
@@ -43,14 +45,11 @@ modelSchema = LocationSchema.extend({
     areaSize: {
         value: Number,
         unit: String
-    }
+    },
+    comments: [CommentSchema]
 });
 
 /**
  * Expose Schema and model
  */
-module.exports = {
-    name: MODEL_NAME,
-    schema: modelSchema,
-    model: mongoose.model(MODEL_NAME, modelSchema)
-};
+module.exports = schema;
