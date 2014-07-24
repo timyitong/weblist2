@@ -6,14 +6,15 @@ var app = express();
 app.application_root = __dirname;
 
 app.bcrypt = require('bcrypt');
-app.everyauth =  require('everyauth');
 
 app.im = require('imagemagick');
 app.fs = require('fs');
+app.passport = require('passport');
+// configure passport
+require('./auth/passport');
 app.path = require('path');
 app.mongoose = require('mongoose');
 app.moment = require('moment')
-
 
 // Moment setip
 app.moment.relativeTime={

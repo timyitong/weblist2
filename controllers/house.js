@@ -50,7 +50,7 @@ module.exports = function(app) {
                 res.render('house/new.jade', { countries: countries });
             });
         } else {
-            res.redirect('/signin');
+            res.redirect('/login');
         }
     });
 

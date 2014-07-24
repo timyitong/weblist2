@@ -14,18 +14,51 @@ var mongoose = require('mongoose'),
 modelSchema = BaseSchema.extend({
     email: String,
     password: String,
+    facebook: {
+        id: String,
+        accessToken: String,
+        email: String,
+        name: String,
+        firstName: String,
+        lastName: String
+    },
+    twitter: {
+        id: String,
+        accessToken: String,
+        tokenSecret: String,
+        displayName: String,
+        username: String,
+        email: String
+    },
+    google: {
+        id: String,
+        accessToken: String,
+        email: String,
+        name: String
+    }
 });
 
 /**
  * Encrypt password before saving data.
  */
 modelSchema.pre('save', function(next) {
-    var salt = bcrypt.genSaltSync(10);
-    var hash = bcrypt.hashSync(this.password, salt);
-    console.log('Storing password');
-    this.password = hash;
-    next();
+    var user = this;
+
+    if (!user.isModified('password')) return next();
+
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err) return next(err);
+        bcrypt.hash(user.password, salt, function(err, hash) {
+            if (err) return next(err);
+            user.password = hash;
+            next();
+        });
+    });
 });
+
+modelSchema.methods.validPassword = function(password) {
+    return bcrypt.compareSync(password, this.password);
+};
 
 /**
  * Expose Schema and model

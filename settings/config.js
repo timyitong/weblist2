@@ -1,5 +1,6 @@
 module.exports = function(app, express){
     var config=this;
+    var expressValidator = require('express-validator');
 
     app.configure(function () {
         // view engine
@@ -20,6 +21,22 @@ module.exports = function(app, express){
             store: new express.session.MemoryStore
         }));
 
+        app.use(app.passport.initialize());
+        app.use(app.passport.session());
+        app.use(function(req, res, next) {
+            // Make user object available in templates.
+            res.locals.user = req.user;
+            next();
+        });
+        // remember original destination before login.
+        app.use(function(req, res, next) {
+            var path = req.path.split('/')[1];
+            if (/auth|login|logout|signup|fonts|favicon|css|javascript/i.test(path)) {
+                return next();
+            }
+            req.session.returnTo = req.path;
+            next();
+        });
         app.use(express.static(app.path.join(app.application_root,
                                              "static")));
         app.use(express.errorHandler({
@@ -34,7 +51,7 @@ module.exports = function(app, express){
         // }));
         app.use(express.urlencoded());
         app.use(express.json());
-
+        app.use(expressValidator());
         app.use(function (req, res, next) {
             if (req.cookies.uid != undefined && req.cookies.uid != 'undefined') {
                 req.session.uid = req.cookies.uid;
@@ -47,9 +64,6 @@ module.exports = function(app, express){
             res.locals.session = req.session;
             next();
         });
-
-        // everyauth
-        app.use(app.everyauth.middleware());
 
         // router
         app.use(app.router);
