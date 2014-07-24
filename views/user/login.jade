@@ -3,6 +3,8 @@ extends layout
 block content
     p login form
     div#user_login_form
+        - if (message)
+            div.message #{message}
         form(method="POST", action="/login", role="form")
             div.form-group
                 label email

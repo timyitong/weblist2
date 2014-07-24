@@ -4,7 +4,6 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId,
-    MODEL_NAME = 'baseDynamic',
     modelSchema;
 
 /**
@@ -19,7 +18,7 @@ modelSchema = new Schema({
  * Store timestamp before saving data.
  */
 modelSchema.pre('save', function(next) {
-	console.log('Saving timestamp');
+    console.log('Saving timestamp');
     now = new Date();
     this.updateTime = now;
     if ( !this.createTime ) {
@@ -31,7 +30,4 @@ modelSchema.pre('save', function(next) {
 /**
  * Expose Schema
  */
-module.exports = {
-    name: MODEL_NAME,
-    schema: modelSchema
-};
+module.exports = modelSchema;

@@ -5,7 +5,7 @@ block append head
 
 block content
     div#house_new_form_container
-        form(method="POST", action="/house/save", role="form")
+        form(method="POST", action="/house", role="form")
 
             div.form-group
                 label Title
@@ -78,4 +78,5 @@ block content
             input.form-control(type="hidden", name="latitude")
             input.form-control(type="hidden", name="longitude")
 
-            input(type="submit", class="btn btn-lg btn-primary")
+            input(type="submit", value="提出する", class="btn btn-md", style="border: 1px solid #000; width: 100px; border-radius: 0;background: #f0f0f0 url(/images/bk.gif);")
+

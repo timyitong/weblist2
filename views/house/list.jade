@@ -1,14 +1,31 @@
 extends layout
 
 block append head
+    script(src="/javascript/app/house/list.js")
     script(src="/javascript/house/houseList.js")
 
 block content
-    each house in houses
-        a(href="/house/view/#{house._id}") #{house.title}
-        span |
-        a(href="/house/delete/#{house._id}") del
-        br
+    div.container-full
+        //- div.row.search-box
+        //-     form(action="/houses", method="GET")
+        //-         input(type="text", placeholder="Search for a keyword", name="keyword")
+        //-         input(type="submit", value="search")
+        each house in houses
+            div.house-item-box
+                - if (house.images && house.images.length > 0)
+                    a(href="/house/#{house._id}", rel="#{house.title}")
+                        img(width="220", height="165", src="/uploads/#{house.images[0]._id}/medium#{house.images[0].extension}", image-id="#{house.images[0]._id}")
+                - var clean_title = house.title
+                - if (house.title.length > 14) clean_title = clean_title.substring(0, 14) + '...'
+                div.house-title
+                    a(href="/house/#{house._id}", rel="#{house.title}") #{clean_title}
+                span.money #{house.price.unit}#{house.price.value}
+                // span.glyphicon.glyphicon-heart.pull-right(style="color:#ccc;")
+                span.glyphicon.glyphicon-heart.pull-right(style="color:#FF4D6D;")
+                span.info.pull-right #{house.bedroomNum}BD | #{house.bathroomNum}BA
+                // TODO this should go to user manage listing page
+                // a(href="/house/delete/#{house._id}") del
 
-    div.popin
-        div#map
+    // The map plugin:
+    //- div.popin
+    //-     div#map

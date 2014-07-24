@@ -9,7 +9,7 @@ block content
         form#user-info-form(method="POST", action="/user/edit")
             div.form-group
                 label User Name
-                input.form-control(name="username", type="text", value="#{profile.username}")
+                input.form-control(name="username", type="text", value="#{user.profile.username}")
             div.form-group
                 label Password
                 input.form-control(name="password", type="password")

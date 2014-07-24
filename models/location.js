@@ -2,10 +2,9 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose');
-var BaseSchema = require('./base').schema;
+var BaseSchema = require('./base');
 var ObjectId = mongoose.Schema.ObjectId;
 var extend = require('mongoose-schema-extend');
-var MODEL_NAME = 'location';
 var modelSchema;
 
 /**
@@ -48,7 +47,4 @@ modelSchema = BaseSchema.extend({
 /**
  * Expose Schema and model
  */
-module.exports = {
-    name: MODEL_NAME,
-    schema: modelSchema
-};
+module.exports = modelSchema;

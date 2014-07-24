@@ -10,8 +10,6 @@ app.bcrypt = require('bcrypt');
 app.im = require('imagemagick');
 app.fs = require('fs');
 app.passport = require('passport');
-// configure passport
-require('./auth/passport');
 app.path = require('path');
 app.mongoose = require('mongoose');
 app.moment = require('moment')
@@ -39,6 +37,9 @@ var constants = require("./utils/constants");
 
 // Include config file
 var config = require('./settings/config')(app, express);
+
+// configure passport
+require('./auth/passport');
 
 // Include models file
 app.models = require("./settings/models");

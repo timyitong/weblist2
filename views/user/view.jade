@@ -1,10 +1,12 @@
 extends layout
 block content
-    div.containter
+    div
         div.row
-            span #{profile.username}
-        div.row
-            img(src="/uploads/#{profile.avatar._id}/small#{profile.avatar.extension}")
-        div
-            - if (session.uid == user._id)
-                a(href="/user/edit") edit
+            div.col-sm-1.user-pic
+                if (profile.avatar)
+                    img(src="/uploads/#{profile.avatar._id}/small#{profile.avatar.extension}")
+            div.col-sm-10
+                span.h3 #{profile.username}
+            - if (canEdit)
+                div.col-sm-1
+                    a(href="/user/edit") edit

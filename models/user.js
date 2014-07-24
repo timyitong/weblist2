@@ -1,19 +1,16 @@
-/**
- * Module dependencies.
- */
-var mongoose = require('mongoose'),
-    BaseSchema = require('./base').schema,
-    extend = require('mongoose-schema-extend'),
-    bcrypt = require('bcrypt'),
-    MODEL_NAME = 'user',
-    modelSchema;
+// SCHEMA - user
+// !This table stores email/password, should never be rendered.
 
-/**
- * Define Schema
- */
-modelSchema = BaseSchema.extend({
+// Module Dependencies
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+var bcrypt = require('bcrypt');
+
+// Define schema
+var schema = new Schema({
     email: String,
     password: String,
+    profile: {type: Schema.Types.ObjectId, ref: 'userProfile'},
     facebook: {
         id: String,
         accessToken: String,
@@ -41,7 +38,7 @@ modelSchema = BaseSchema.extend({
 /**
  * Encrypt password before saving data.
  */
-modelSchema.pre('save', function(next) {
+schema.pre('save', function(next) {
     var user = this;
 
     if (!user.isModified('password')) return next();
@@ -56,15 +53,8 @@ modelSchema.pre('save', function(next) {
     });
 });
 
-modelSchema.methods.validPassword = function(password) {
+schema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.password);
 };
 
-/**
- * Expose Schema and model
- */
-module.exports = {
-    name: MODEL_NAME,
-    schema: modelSchema,
-    model: mongoose.model(MODEL_NAME, modelSchema)
-};
+module.exports = schema;

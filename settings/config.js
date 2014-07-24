@@ -1,4 +1,4 @@
-module.exports = function(app, express){
+module.exports = function(app, express) {
     var config=this;
     var expressValidator = require('express-validator');
 
@@ -14,15 +14,15 @@ module.exports = function(app, express){
         var methodOverride = require("method-override");
         app.use(methodOverride());
 
-
+        app.use(app.passport.initialize());
+        app.use(app.passport.session());
+        
         app.use(express.cookieParser("csecstring"));
         app.use(express.session({
             secret: 'topsecret',
             store: new express.session.MemoryStore
         }));
 
-        app.use(app.passport.initialize());
-        app.use(app.passport.session());
         app.use(function(req, res, next) {
             // Make user object available in templates.
             res.locals.user = req.user;
@@ -44,11 +44,6 @@ module.exports = function(app, express){
             showStack:  true
         }));
 
-        // @deprecated        
-        // app.use(express.bodyParser({
-        //     keepExtensions:  true,
-        //     uploadDir:  "./static/uploads"
-        // }));
         app.use(express.urlencoded());
         app.use(express.json());
         app.use(expressValidator());
@@ -70,7 +65,10 @@ module.exports = function(app, express){
     });
 
     // DB Config
-    app.mongoose.connect('mongodb://localhost:27017/weblist2');
+    var connection = app.mongoose.connect('mongodb://localhost:27017/weblist2');
+    // Init schema table for mongoose-auto-increment
+    var autoIncrement = require('mongoose-auto-increment');
+    autoIncrement.initialize(connection);
 
     return config;
 }

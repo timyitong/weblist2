@@ -21,21 +21,22 @@
   height: 35px;
   line-height: 2em;
   font-size: 20px;
+  color: #565a5c;
 }
 
 .house-info-name {
   font-size: 11px;
   height: 20px;
-  color: #333;
+  color: #000;
 }
 
 .house-title {
-  margin-top: 20px;
   width: 100%;
 }
 
 .image-box {
     width: 600px;
+    float: left;
 }
 
 .image-small-box {
@@ -51,4 +52,42 @@
 
 .image-slideshow {
     opacity: 0.5;
+}
+
+.house-item-box {
+  float: left;
+  width: 240px;
+  height: 230px;
+  margin: 20px;
+  display:inline-block;
+  border-radius: 3px;
+  padding: 9px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+  background: #fff;
+
+  a {
+    font-size: 14px;
+    font-weight: bold;
+    color: #0c0c0c;
+  }
+
+  .money {
+    color: #FF4D6D;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .info {
+    font-size: 12px;
+    color: #ccc;
+    line-height: 17px;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .house-title {
+    margin-top: 5px;
+    width: 100%;
+    margin-bottom: 5px;
+  }
 }
