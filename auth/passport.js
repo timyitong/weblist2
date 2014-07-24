@@ -4,8 +4,9 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-var UserModel = require('../models/user').model;
-var UserProfileModel = require('../models/userProfile').model;
+var models = require('../settings/models');
+var UserModel = models.UserModel;
+var UserProfileModel = models.UserProfileModel;
 var secrets = require('../config/secrets');
 
 

@@ -3,7 +3,8 @@ block content
     div
         div.row
             div.col-sm-1.user-pic
-                img(src="/uploads/#{profile.avatar._id}/small#{profile.avatar.extension}")
+                if (profile.avatar)
+                    img(src="/uploads/#{profile.avatar._id}/small#{profile.avatar.extension}")
             div.col-sm-10
                 span.h3 #{profile.username}
             - if (canEdit)

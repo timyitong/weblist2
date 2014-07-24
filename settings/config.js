@@ -1,4 +1,4 @@
-module.exports = function(app, express){
+module.exports = function(app, express) {
     var config=this;
     var expressValidator = require('express-validator');
 
@@ -14,15 +14,15 @@ module.exports = function(app, express){
         var methodOverride = require("method-override");
         app.use(methodOverride());
 
-
+        app.use(app.passport.initialize());
+        app.use(app.passport.session());
+        
         app.use(express.cookieParser("csecstring"));
         app.use(express.session({
             secret: 'topsecret',
             store: new express.session.MemoryStore
         }));
 
-        app.use(app.passport.initialize());
-        app.use(app.passport.session());
         app.use(function(req, res, next) {
             // Make user object available in templates.
             res.locals.user = req.user;

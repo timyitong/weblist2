@@ -7,8 +7,6 @@ module.exports = function(app) {
     var bcrypt = require('bcrypt');
     var passport = app.passport;
 
->>>>>>> master
-
     app.post('/login', function (req, res, next) {
         // TODO commented this part out for testing purpose.
         // req.assert('email', 'Email is not valid').isEmail();
