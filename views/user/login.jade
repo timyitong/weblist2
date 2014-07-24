@@ -5,7 +5,7 @@ block content
     div#user_login_form
         - if (message)
             div.message #{message}
-        form(method="POST", action="/signin", role="form")
+        form(method="POST", action="/login", role="form")
             div.form-group
                 label email
                 input.form-control(type="text", name="email")
@@ -15,3 +15,9 @@ block content
                 input.form-control(type="password", name="password")
 
             input(type="submit", class="btn btn-lg btn-primary")
+    a.btn(href='/auth/facebook')
+        | Sign in with Facebook
+    a.btn(href='/auth/twitter')
+        | Sign in with Twitter
+    a.btn(href='/auth/google')
+        | Sign in with Google

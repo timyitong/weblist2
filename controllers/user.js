@@ -1,15 +1,28 @@
 module.exports = function(app) {
     var _ = require('underscore');
     var models = app.models;
+
     var Schema = app.mongoose.Schema;
     var ObjectId = Schema.Types.ObjectId;
     var bcrypt = require('bcrypt');
+    var passport = app.passport;
 
-    app.post('/signin', function (req, res) {
-        return models.UserModel.findOne({ email: req.body.email }, function(err, user) {
-            if (err){
-                return res.send('Login failed caused by database. ' + err);
+>>>>>>> master
+
+    app.post('/login', function (req, res, next) {
+        // TODO commented this part out for testing purpose.
+        // req.assert('email', 'Email is not valid').isEmail();
+        // req.assert('password', 'Password cannot be blank').notEmpty();
+
+        var errors = req.validationErrors();
+        if (errors) {
+            return res.send(errors);
+        }
+        passport.authenticate('local-login', function(err, user, info) {
+            if (err) {
+                return next(err);
             }
+
             if (user == undefined) {
                 console.log('email not found');
                 return res.render('user/login.jade', {message: 'Email address not found.'});                
@@ -36,24 +49,33 @@ module.exports = function(app) {
                 console.log('password does not match');
                 return res.render('user/login.jade', {message: 'Password Not Matched'});
             }
-        });
+            req.logIn(user, function(err) {
+                if (err) {
+                    return next(err);
+                }
+                req.session.uid = user._id;
+                res.cookie('uid', user._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
+                console.log(req.session.returnTo);
+                res.redirect(req.session.returnTo || '/');
+            });
+        })(req, res, next);
     });
 
-    app.get('/signin', function (req, res){
+    app.get('/login', function (req, res){
         res.render('user/login.jade', {});
     });
 
     //TODO This should be using post request in future
-    app.get('/signout', function (req,res) {
+    app.get('/logout', function (req,res) {
         req.session.uid = undefined;
         req.cookies.uid = undefined;
         res.cookie('uid', undefined);
-        res.redirect('/signin');
+        res.redirect('/login');
     });
 
     app.get('/user/edit', function (req, res) {
         if (req.session.uid == undefined) {
-            return res.redirect("/signin");
+            return res.redirect('/login');
         }
 
         return models.UserModel.findById({_id: req.session.uid}).populate('profile').exec(function (err, user) {
@@ -68,7 +90,7 @@ module.exports = function(app) {
 
     app.post('/user/edit', function (req, res) {
         if (req.session.uid == undefined) {
-            return res.redirect('/signin');
+            return res.redirect('/login');
         }
         var password = req.body.password;
 
@@ -170,7 +192,7 @@ module.exports = function(app) {
         var uid = req.params.id;
         if (uid == undefined) {
             if (req.session.uid == undefined) {
-                return res.redirect('/signin');
+                return res.redirect('/login');
             } else{
                 uid = req.session.uid;
             }
