@@ -33,9 +33,10 @@ module.exports = function(app) {
     app.use(cookieParser());
     // Session, maxAge: 1 week, use Redis for storage
     app.use(session({ secret: 'olalalala', 
-                      store: new RedisStore(
-                        {url: 'redis://127.0.0.1:6379/weblist2_session_storage'}
-                      ),
+//                      store: new RedisStore(
+//                        {url: 'redis://127.0.0.1:6379/weblist2_session_storage'}
+//                      ),
+                      store: new session.MemoryStore,
                       cookie: { maxAge: 7*24*60*60*1000 },
                       resave: true,
                       saveUninitialized: true

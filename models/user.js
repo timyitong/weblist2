@@ -2,9 +2,10 @@
 // !This table stores email/password, should never be rendered.
 
 // Module Dependencies
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    passportLocalMongoose = require('passport-local-mongoose');
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+var passportLocalMongoose = require('passport-local-mongoose');
+var bcrypt = require('bcrypt');
 
 // Define schema
 var schema = new Schema({
@@ -12,6 +13,9 @@ var schema = new Schema({
     //   username: String
     //   hash: String
     //   salt: String
+    email: String,
+    password: String,
+
     profile: {type: Schema.Types.ObjectId, ref: 'userProfile'},
     facebook: {
         id: String,
@@ -45,5 +49,9 @@ schema.plugin(passportLocalMongoose, {
     keylen: 512,
 // Other settings:
 });
+
+schema.methods.validPassword = function(password) {
+    return bcrypt.compareSync(password, this.password);
+};
 
 module.exports = schema;

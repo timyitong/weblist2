@@ -1,56 +1,40 @@
 module.exports = function(app) {
-    var _ = require('underscore'),
-        models = require('../settings/models'),
-        Schema = require('mongoose').Schema.Types.ObjectId,
-        passport = require('passport');
+    var _ = require('underscore');
+    var models = require('../settings/models');
+    var Schema = require('mongoose').Schema.Types.ObjectId;
+    var passport = require('passport');
+    var bcrypt = require('bcrypt');
 
     app.post('/login', function (req, res, next) {
         // TODO commented this part out for testing purpose.
         // req.assert('email', 'Email is not valid').isEmail();
         // req.assert('password', 'Password cannot be blank').notEmpty();
 
-        var errors = req.validationErrors();
-        if (errors) {
-            return res.send(errors);
-        }
+        // var errors = req.validationErrors();
+        // if (errors) {
+        //     return res.send(errors);
+        // }
         passport.authenticate('local-login', function(err, user, info) {
             if (err) {
                 return next(err);
             }
 
-            if (user == undefined) {
-                console.log('email not found');
-                return res.render('user/login.jade', {message: 'Email address not found.'});                
-            } else if (app.bcrypt.compareSync(req.body.password, user.password)){
-                req.session.uid = user._id;
-                res.cookie('uid', user._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-                return models.UserProfileModel.findOne({userId: user._id}, function(err, profile) {
-                    if (!err) {
-                        console.log('login success');
-                        
-                        req.session.username = profile.username;
-                        res.cookie('username', profile.username, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-                        req.session.avatar = profile.avatar;
-                        res.cookie('avatar', profile.avatar, {maxAge: 365 * 24 * 60 * 60 * 1000});
-                        return res.redirect('/');
-                    } else {
-                        console.log("profile cannot find.");
-                        return res.send('cannot find profile.');
-                    }
-                })
-            } else {
-                console.log('password does not match');
-                return res.render('user/login.jade', {message: 'Password Not Matched'});
+            if (!user) {
+                return res.render('user/login.jade', {message: 'Email address not found.'});    
             }
             req.logIn(user, function(err) {
+            	console.log('login success.');
                 if (err) {
                     return next(err);
                 }
                 req.session.uid = user._id;
                 res.cookie('uid', user._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
-                console.log(req.session.returnTo);
+                        
+                // req.session.username = user.profile.username;
+                // res.cookie('username', user.profile.username, {maxAge: 365 * 24 * 60 * 60 * 1000});
+
+                // req.session.avatar = user.profile.avatar;
+                // res.cookie('avatar', user.profile.avatar, {maxAge: 365 * 24 * 60 * 60 * 1000});
                 res.redirect(req.session.returnTo || '/');
             });
         })(req, res, next);
