@@ -1,11 +1,8 @@
 module.exports = function(app) {
-    var _ = require('underscore');
-    var models = app.models;
-
-    var Schema = app.mongoose.Schema;
-    var ObjectId = Schema.Types.ObjectId;
-    var bcrypt = require('bcrypt');
-    var passport = app.passport;
+    var _ = require('underscore'),
+        models = require('../settings/models'),
+        Schema = require('mongoose').Schema.Types.ObjectId,
+        passport = require('passport');
 
     app.post('/login', function (req, res, next) {
         // TODO commented this part out for testing purpose.

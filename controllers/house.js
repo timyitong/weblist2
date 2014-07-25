@@ -1,8 +1,8 @@
 module.exports = function(app) {
-    var _ = require('underscore');
-    var models = app.models;
-    var ObjectId = app.mongoose.Types.ObjectId;
-    var stringUtils = require('../utils/stringUtils');
+    var _ = require('underscore'),
+        models = require('../settings/models'),
+        ObjectId = require('mongoose').Schema.Types.ObjectId,
+        stringUtils = require('../utils/stringUtils');
 
     app.get('/houses', function (req, res) {
         var query = {};

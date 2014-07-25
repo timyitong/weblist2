@@ -2,14 +2,16 @@
 // !This table stores email/password, should never be rendered.
 
 // Module Dependencies
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var bcrypt = require('bcrypt');
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    passportLocalMongoose = require('passport-local-mongoose');
 
 // Define schema
 var schema = new Schema({
-    email: String,
-    password: String,
+    // We use passport-local-mongoose to automatically create the following fields:
+    //   username: String
+    //   hash: String
+    //   salt: String
     profile: {type: Schema.Types.ObjectId, ref: 'userProfile'},
     facebook: {
         id: String,
@@ -35,26 +37,13 @@ var schema = new Schema({
     }
 });
 
-/**
- * Encrypt password before saving data.
- */
-schema.pre('save', function(next) {
-    var user = this;
-
-    if (!user.isModified('password')) return next();
-
-    bcrypt.genSalt(10, function(err, salt) {
-        if (err) return next(err);
-        bcrypt.hash(user.password, salt, function(err, hash) {
-            if (err) return next(err);
-            user.password = hash;
-            next();
-        });
-    });
+// Bind passport-local-mongoose plugin. 
+schema.plugin(passportLocalMongoose, {
+// Changing the below settings will prevent existing users to authenticate
+    saltlen: 32,
+    iterations: 25000,
+    keylen: 512,
+// Other settings:
 });
-
-schema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.password);
-};
 
 module.exports = schema;

@@ -1,5 +1,5 @@
 module.exports = function(app) {
-    var passport = app.passport;
+    var passport = require('passport');
     /**
      * OAuth sign-in routes.
      */

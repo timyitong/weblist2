@@ -18,7 +18,7 @@ div.container-full
             //-         a(href="#") 神馬
             // Right menu
             ul.nav.navbar-nav.navbar-right
-                - if (session.uid)
+                - if (user)
                     li
                         a(href="/user", style="padding-top: 10px;height: 50px;")
                             if (session.avatar)
