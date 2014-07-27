@@ -11,7 +11,9 @@ module.exports = function(app) {
         LocalStrategy = require('passport-local').Strategy;
 
     // Our Middlewares
-        rememberReturnTo = require('../middlewares/rememberReturnTo');
+        var rememberReturnTo = require('../middlewares/rememberReturnTo'),
+            rememberMe = require('../middlewares/rememberMe');
+
     // Constants
     var env = process.env.NODE_ENV || 'development',
         application_root = app.get('application_root');
@@ -41,18 +43,9 @@ module.exports = function(app) {
     }
     app.use(session({   secret: "olalalala", 
                         store: sessionStore,
-                        // cookie: { maxAge: 7*24*60*60*1000 },
                         resave: true,
                         saveUninitialized: true
                     }));
-    // app.use(cookieSession({keys:['key1', 'key2']}));
-
-    /* Enable locals.messages system:
-     *  a. Access messages through locals.messages.[fieldName]
-     *  b. Define flashy message through:
-     *       req.flashy('[fieldName]', 'Message')
-     */
-    // app.use(flashy());
 
     /* Method override, making you see PUT/DELETE when the client
      * does not support it.
@@ -66,6 +59,7 @@ module.exports = function(app) {
 
     // remember original destination before login.
     app.use(rememberReturnTo);
+    app.use(rememberMe);
     
     require('../auth/passport')(passport);
     // Set up Passport
