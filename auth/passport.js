@@ -7,7 +7,8 @@ var _ = require('underscore'),
     TwitterStrategy = require('passport-twitter').Strategy,
     GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
     UserModel = require('../settings/models').UserModel,
-    secrets = require('../config/secrets');
+    secrets = require('../config/secrets'),
+    stringUtils = require('../utils/stringUtils');
 
 module.exports = function (passport) {
 
@@ -34,9 +35,11 @@ module.exports = function (passport) {
         // This field seems to be important
         passReqToCallback: true
     }, function(req, email, password, done) {
-        UserModel.findOne({ email: email }, function(err, user) {
-            console.log(req.login);
+        if (!stringUtils.validEmail(email)) {
+            return done(null, false, {message: "Invalid email address"});
+        }
 
+        UserModel.findOne({ email: email }, function(err, user) {
             if (err) {
                 return done(err);
             }
@@ -65,10 +68,14 @@ module.exports = function (passport) {
                             return done(err);
                         }
 
+                        // Extract username from email:
+                        var username = stringUtils.extractNameFromEmail(email);
+
                         // Create and save new instance
                         UserModel.create({
                             email: email,
-                            hash: hash
+                            hash: hash,
+                            username : username
                         }, function(err, user) {
                             if (err) {
                                 return done(err);

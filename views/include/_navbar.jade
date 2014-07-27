@@ -21,8 +21,8 @@ div.container-full
                 - if (user)
                     li
                         a(href="/user", style="padding-top: 10px;height: 50px;")
-                            if (user.avatar)
-                                img(height="30", src="/uploads/#{session.avatar._id}/mini#{session.avatar.extension}")
+                            if (user.avatar && user.avatar._id)
+                                img(height="30", src="/avatar/#{user.id}/mini#{user.avatar.extension}")
                             else
                                 img(height="30", src="/images/default-avatar.jpg")
                     li.dropdown

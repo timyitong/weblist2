@@ -1,9 +1,11 @@
 module.exports = function(app) {
-    var _ = require('underscore');
-    var models = require('../settings/models');
-    var Schema = require('mongoose').Schema.Types.ObjectId;
-    var passport = require('passport');
-    var bcrypt = require('bcrypt');
+    var _ = require('underscore'),
+        fs = require('node-fs'),
+        im = require('imagemagick'),
+        models = require('../settings/models'),
+        ObjectId = require('mongoose').Schema.Types.ObjectId,
+        passport = require('passport'),
+        bcrypt = require('bcrypt');
 
     app.post('/login', function (req, res, next) {
         passport.authenticate('local-login', function(err, user, info) {
@@ -42,15 +44,13 @@ module.exports = function(app) {
         res.redirect('/login');
     });
 
-    // TODO
     app.get('/user/edit', function (req, res) {
-        if (req.session.uid == undefined) {
+        if (!req.isAuthenticated()) {
             return res.redirect('/login');
         }
 
-        return models.UserModel.findById({_id: req.session.uid}).populate('profile').exec(function (err, user) {
+        return models.UserModel.findById(req.user.id, function (err, user) {
             if (!err) {
-                console.log(user);
                 return res.render('user/edit.jade', {user: user});                        
             } else {
                 return res.redirect('/');
@@ -101,10 +101,14 @@ module.exports = function(app) {
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
     app.post('/user/avatar', multipartMiddleware, function (req, res) {
-        if (req.files && req.session.uid != undefined) {
+        if (!req.isAuthenticated()) {
+            res.redirect('/login');
+        }
+
+        if (req.files) {
             var tmpPath = req.files['photo'].path;
             var oldName = req.files['photo'].name;
-            var uid = req.session.uid;
+            var uid = req.user.id;
 
             // Get the file extension
             var extension = oldName.substring(oldName.lastIndexOf('.'), oldName.length);
@@ -116,16 +120,16 @@ module.exports = function(app) {
             // Store image info into db
             imageObj.save(function (err, image) {
                 // Distination Directory
-                var dstDir = app.application_root + '/static/uploads/' + image._id + '/';
+                var dstDir = app.get('application_root') + '/uploads/avatar/' + uid + '/';
                 // mkdir
-                app.fs.mkdirSync(dstDir);
+                fs.mkdirSync(dstDir, 0777, true);
                 _.each(image.formats, function (imageFormat) {
                     var srcPath = tmpPath;
                     var dstPath = dstDir + imageFormat.name + extension;
                     var width = imageFormat.size;
 
                     // Resize the image
-                    app.im.resize({
+                    im.resize({
                         srcPath: srcPath,
                         dstPath: dstPath,
                         width: width,
@@ -133,21 +137,22 @@ module.exports = function(app) {
                     }, function (err, stdout, stderr) {
                         console.log(dstPath);
                         if (!err) {
-                            return console.log("Avatar resized");
+                            // do nothing
                         } else {
-                            console.log(err + "\n message: " + stderr);
+                            // return res.redirect('/user/edit');
                         }
                     });
                 });
-                // Save Avatar to Profile
-                models.UserProfileModel.findOneAndUpdate(
-                      { userId: uid }
+
+                // Save Avatar to User
+                models.UserModel.findOneAndUpdate(
+                      { _id: uid }
                     , { $set: { avatar: { _id: image._id,
                                           extension: image.extension
                                         }
                               }
-                      }, function (err, profile) {
-                        res.redirect('/user/' + profile.userId);
+                      }, function (err, user) {
+                        return res.redirect('/user/' + uid);
                     }
                 );
             });
@@ -157,22 +162,25 @@ module.exports = function(app) {
     });
 
     app.get('/user', function (req, res) {
-        return res.redirect('/user/' + req.session.uid);
+        return res.redirect('/user/' + req.user.id);
     });
 
     app.get('/user/:id', function (req, res) {
         var uid = req.params.id;
         if (uid == undefined) {
-            if (req.session.uid == undefined) {
-                return res.redirect('/login');
+            if (req.isAuthenticated()) {
+                uid = req.user.id;
             } else{
-                uid = req.session.uid;
+                return res.redirect('/login');
             }
         }
-
-        models.UserProfileModel.findOne({userId: uid}, function (err, profile) {
+        console.log(uid);
+        models.UserModel.findById(uid, function (err, user) {
             if (!err) {
-                return res.render('user/view.jade', {profile: profile, canEdit: uid == req.session.uid});
+                console.log(user);
+                var profile = user.getProfile();
+                profile.canEdit = req.user && req.user.id == uid;
+                return res.render('user/view.jade', {profile: profile});
             } else {
                 return res.redirect('/');
             }

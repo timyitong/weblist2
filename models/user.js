@@ -11,6 +11,11 @@ var mongoose = require('mongoose'),
 var schema = new Schema({
     email: String,
     hash: String,
+    username: String,
+    avatar: {
+        _id: ObjectId,
+        extension: String
+    },
     /* salt does not need to be stored, see:
      *      http://stackoverflow.com/questions/277044/do-i-need-to-store-the-salt-with-bcrypt
      */
@@ -45,6 +50,27 @@ schema.virtual('password').get(function () {
 schema.virtual('id').get(function () {
     return this._id;
 });
+
+schema.methods.getProfile = function () {
+    var user = this;
+    var profile = {
+        username: user.username,
+        userid: user.id,
+        avatar: user.avatar
+    };
+
+    if (!profile.username) {
+        if (user.facebook && user.facebook.name) {
+            profile.username = user.facebook.name;
+        } else if (user.twitter && user.twitter.displayName) {
+            profile.username = user.twitter.displayName;
+        } else if (user.google && user.google.name) {
+            profile.username = user.google.name;
+        }
+    }
+
+    return profile;
+}
 
 schema.methods.validPassword = function (password, done) {
     // This is very important! this only returns the instance living in the direct method call

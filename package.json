@@ -20,6 +20,7 @@
     "mongoose-auto-increment": "3.0.8",
     "mongoose-schema-extend": ">=0.1.7",
     "morgan": "1.2.0",
+    "node-fs": "0.1.7",
     "passport": "0.2.0",
     "passport-facebook": "1.0.3",
     "passport-google-oauth": "0.1.5",
