@@ -57,5 +57,5 @@ app.listen(port);
 console.log("Listening on port " + port);
 
 // TODO: move this configure passport
-require('./auth/passport');
+// require('./auth/passport');
 /****************************************/

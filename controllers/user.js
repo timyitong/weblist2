@@ -6,36 +6,26 @@ module.exports = function(app) {
     var bcrypt = require('bcrypt');
 
     app.post('/login', function (req, res, next) {
-        // TODO commented this part out for testing purpose.
-        // req.assert('email', 'Email is not valid').isEmail();
-        // req.assert('password', 'Password cannot be blank').notEmpty();
-
-        // var errors = req.validationErrors();
-        // if (errors) {
-        //     return res.send(errors);
-        // }
         passport.authenticate('local-login', function(err, user, info) {
             if (err) {
                 return next(err);
             }
 
             if (!user) {
-                return res.render('user/login.jade', {message: 'Email address not found.'});    
+                return res.render('user/login.jade', {message: 'Login failed.'});    
             }
-            req.logIn(user, function(err) {
+
+            // Prefer lower cases function call: login than logIn
+            req.login(user, function(err) {
             	console.log('login success.');
                 if (err) {
                     return next(err);
                 }
-                req.session.uid = user._id;
-                res.cookie('uid', user._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
-                        
-                // req.session.username = user.profile.username;
-                // res.cookie('username', user.profile.username, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-                // req.session.avatar = user.profile.avatar;
-                // res.cookie('avatar', user.profile.avatar, {maxAge: 365 * 24 * 60 * 60 * 1000});
-                res.redirect(req.session.returnTo || '/');
+                var back = req.session.returnTo;
+                if (back == undefined) {
+                    back = '/';
+                }
+                res.redirect(back);
             });
         })(req, res, next);
     });
@@ -44,14 +34,15 @@ module.exports = function(app) {
         res.render('user/login.jade', {});
     });
 
-    //TODO This should be using post request in future
+    // I think GET is fine in this case. This is more easier to use in the frontend.
     app.get('/logout', function (req,res) {
-        req.session.uid = undefined;
-        req.cookies.uid = undefined;
-        res.cookie('uid', undefined);
+        // Call passport request.logout()
+        req.logout();
+        // Redirect page
         res.redirect('/login');
     });
 
+    // TODO
     app.get('/user/edit', function (req, res) {
         if (req.session.uid == undefined) {
             return res.redirect('/login');
@@ -67,6 +58,7 @@ module.exports = function(app) {
         });
     });
 
+    // TODO
     app.post('/user/edit', function (req, res) {
         if (req.session.uid == undefined) {
             return res.redirect('/login');
@@ -104,6 +96,7 @@ module.exports = function(app) {
         }
     });
 
+    // TODO
     // Upload images for House
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
@@ -186,61 +179,91 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/signup', function (req, res) {
-
-        return models.UserModel.findOne({ email: req.body.email }, function(err, user) {
+    /* Nested structure should be used if we want to control 
+     * details like redirect to the place before logging
+     */
+    app.post('/signup', function(req, res, next) {
+        passport.authenticate('local-signup', function (err, user, info) {
             if (err) {
-                return res.send('Login failed caused by database. ' + err);
+                return next(err); 
             }
-            if (user == undefined) {
-                var newUser = new models.UserModel({
-                    email: req.body.email,
-                    password: req.body.password
-                });
-
-                // Save Basic user information 
-                newUser.save(function (err) {
-                    if (!err) {
-                        req.session.uid = newUser._id;
-                        res.cookie('uid', newUser._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-                        // Build user profile
-                        var atPosition = newUser.email.indexOf('@');
-                        atPosition = atPosition == -1 ? newUser.email.length : atPosition;
-                        var profile = new models.UserProfileModel({
-                            username: newUser.email.substring(0, atPosition),
-                            userId: newUser._id
-                        });
-                        // Save user profile 
-                        return profile.save(function (err, profile) {
-                            newUser.profile = profile._id;
-                            // Save user's ref to profile
-                            newUser.save(function (err) {
-                                req.session.username = profile.username;
-                                res.cookie('username', profile.username, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-
-                                // Set Avatar
-                                req.session.avatar = profile.avatar;
-                                res.cookie('avatar', profile.avatar, {maxAge: 365 * 24 * 60 * 60 * 1000});
-                                res.redirect('/');
-                            });
-                        });
-                    } else {
-                        return res.render(
-                            'user/signup.jade',
-                            { message:  'An error occurred during signing up.'}
-                        );
-                    }
-                });              
-            } else {
-                return res.render(
-                    'user/signup.jade',
-                    { message: 'Email address already used. ' + req.body.email }
-                );
+            if (!user) {
+                return res.redirect('/signup'); 
             }
-        });
+            
+            // req.logIn or req.login is equivalent, lowercase preferred :D
+            req.logIn(user, function(err) {
+                            console.log(user);
+                if (err) { return next(err); }
+                var back = res.locals.returnTo;
+                if (!back) {
+                    back = '/';
+                }
+                res.redirect(back);
+            });
+        })(req, res, next); // important to put this <- if we need this nested structure
     });
+    // app.post('/signup', passport.authenticate('local-signup', {
+    //     successRedirect: '/',
+    //     failureRedirect: '/login'
+    // }));
+
+    /* Old signup DO NOT DELETE UNLESS CONFIRMED*/
+    // app.post('/signup', function (req, res) {
+
+    //     return models.UserModel.findOne({ email: req.body.email }, function(err, user) {
+    //         if (err) {
+    //             return res.send('Login failed caused by database. ' + err);
+    //         }
+    //         if (user == undefined) {
+    //             var newUser = new models.UserModel({
+    //                 email: req.body.email,
+    //                 password: req.body.password
+    //             });
+
+    //             // Save Basic user information 
+    //             newUser.save(function (err) {
+    //                 if (!err) {
+    //                     req.session.uid = newUser._id;
+    //                     res.cookie('uid', newUser._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
+
+    //                     // Build user profile
+    //                     var atPosition = newUser.email.indexOf('@');
+    //                     atPosition = atPosition == -1 ? newUser.email.length : atPosition;
+    //                     var profile = new models.UserProfileModel({
+    //                         username: newUser.email.substring(0, atPosition),
+    //                         userId: newUser._id
+    //                     });
+    //                     // Save user profile 
+    //                     return profile.save(function (err, profile) {
+    //                         newUser.profile = profile._id;
+    //                         // Save user's ref to profile
+    //                         newUser.save(function (err) {
+    //                             req.session.username = profile.username;
+    //                             res.cookie('username', profile.username, {maxAge: 365 * 24 * 60 * 60 * 1000});
+
+
+    //                             // Set Avatar
+    //                             req.session.avatar = profile.avatar;
+    //                             res.cookie('avatar', profile.avatar, {maxAge: 365 * 24 * 60 * 60 * 1000});
+    //                             res.redirect('/');
+    //                         });
+    //                     });
+    //                 } else {
+    //                     return res.render(
+    //                         'user/signup.jade',
+    //                         { message:  'An error occurred during signing up.'}
+    //                     );
+    //                 }
+    //             });              
+    //         } else {
+    //             return res.render(
+    //                 'user/signup.jade',
+    //                 { message: 'Email address already used. ' + req.body.email }
+    //             );
+    //         }
+    //     });
+    // });
 
     app.get('/signup', function (req, res) {
         res.render("user/signup.jade", {});

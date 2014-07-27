@@ -42,7 +42,6 @@ module.exports = models = {
     ImageModel: loadModel('image'),
     HouseModel: loadModel('house'),
     UserModel: loadModel('user'),
-    UserProfileModel: loadModel('userProfile'),
     UserCollectionListModel: loadModel('userCollectionList'),
     CityModel: loadModel('city'),
     RegionModel: loadModel('region'),

@@ -2,21 +2,18 @@
 // !This table stores email/password, should never be rendered.
 
 // Module Dependencies
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var passportLocalMongoose = require('passport-local-mongoose');
-var bcrypt = require('bcrypt');
+var mongoose = require('mongoose'),
+    bcrypt = require('bcrypt'),
+    Schema = mongoose.Schema,
+    ObjectId = Schema.Types.ObjectId;
 
 // Define schema
 var schema = new Schema({
-    // We use passport-local-mongoose to automatically create the following fields:
-    //   username: String
-    //   hash: String
-    //   salt: String
     email: String,
-    password: String,
-
-    profile: {type: Schema.Types.ObjectId, ref: 'userProfile'},
+    hash: String,
+    /* salt does not need to be stored, see:
+     *      http://stackoverflow.com/questions/277044/do-i-need-to-store-the-salt-with-bcrypt
+     */
     facebook: {
         id: String,
         accessToken: String,
@@ -41,17 +38,27 @@ var schema = new Schema({
     }
 });
 
-// Bind passport-local-mongoose plugin. 
-schema.plugin(passportLocalMongoose, {
-// Changing the below settings will prevent existing users to authenticate
-    saltlen: 32,
-    iterations: 25000,
-    keylen: 512,
-// Other settings:
+schema.virtual('password').get(function () {
+    return this.hash;
 });
 
-schema.methods.validPassword = function(password) {
-    return bcrypt.compareSync(password, this.password);
-};
+schema.virtual('id').get(function () {
+    return this._id;
+});
+
+schema.methods.validPassword = function (password, done) {
+    // This is very important! this only returns the instance living in the direct method call
+    // Without saving it, we cannot return user instance later.
+    var user = this;
+
+    bcrypt.compare(password, user.hash, function(err, validated) {
+        if (err) return done(err);
+        if (validated) {
+            return done(null, user);
+        } else{
+            return done(null, false);
+        }
+    });
+}
 
 module.exports = schema;
