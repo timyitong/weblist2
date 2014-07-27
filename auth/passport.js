@@ -1,7 +1,6 @@
 var _ = require('underscore'),
     bcrypt = require('bcrypt'),
     ObjectId = require('mongoose').Schema.Types.ObjectId,
-    // passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
     FacebookStrategy = require('passport-facebook').Strategy,
     TwitterStrategy = require('passport-twitter').Strategy,
@@ -245,23 +244,3 @@ module.exports = function (passport) {
         });
     }));
 }
-
-// // Login Required middleware.
-
-// TODO make a different export
-// exports.isAuthenticated = function(req, res, next) {
-//     if (req.isAuthenticated()) return next();
-//     res.redirect('/login');
-// };
-
-// // Authorization Required middleware.
-
-// exports.isAuthorized = function(req, res, next) {
-//     var provider = req.path.split('/').slice(-1)[0];
-
-//     if (_.find(req.user.tokens, { kind: provider })) {
-//         next();
-//     } else {
-//         res.redirect('/auth/' + provider);
-//     }
-// };

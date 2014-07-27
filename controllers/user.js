@@ -36,7 +36,6 @@ module.exports = function(app) {
         res.render('user/login.jade', {});
     });
 
-    // I think GET is fine in this case. This is more easier to use in the frontend.
     app.get('/logout', function (req,res) {
         // Call passport request.logout()
         req.logout();
@@ -96,7 +95,6 @@ module.exports = function(app) {
         }
     });
 
-    // TODO
     // Upload images for House
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
@@ -117,6 +115,8 @@ module.exports = function(app) {
                 extension: extension
             });
 
+
+            // Maybe we can create a better function and put it inside image model
             // Store image info into db
             imageObj.save(function (err, image) {
                 // Distination Directory
@@ -211,68 +211,7 @@ module.exports = function(app) {
             });
         })(req, res, next); // important to put this <- if we need this nested structure
     });
-    // app.post('/signup', passport.authenticate('local-signup', {
-    //     successRedirect: '/',
-    //     failureRedirect: '/login'
-    // }));
-
-    /* Old signup DO NOT DELETE UNLESS CONFIRMED*/
-    // app.post('/signup', function (req, res) {
-
-    //     return models.UserModel.findOne({ email: req.body.email }, function(err, user) {
-    //         if (err) {
-    //             return res.send('Login failed caused by database. ' + err);
-    //         }
-    //         if (user == undefined) {
-    //             var newUser = new models.UserModel({
-    //                 email: req.body.email,
-    //                 password: req.body.password
-    //             });
-
-    //             // Save Basic user information 
-    //             newUser.save(function (err) {
-    //                 if (!err) {
-    //                     req.session.uid = newUser._id;
-    //                     res.cookie('uid', newUser._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-    //                     // Build user profile
-    //                     var atPosition = newUser.email.indexOf('@');
-    //                     atPosition = atPosition == -1 ? newUser.email.length : atPosition;
-    //                     var profile = new models.UserProfileModel({
-    //                         username: newUser.email.substring(0, atPosition),
-    //                         userId: newUser._id
-    //                     });
-    //                     // Save user profile 
-    //                     return profile.save(function (err, profile) {
-    //                         newUser.profile = profile._id;
-    //                         // Save user's ref to profile
-    //                         newUser.save(function (err) {
-    //                             req.session.username = profile.username;
-    //                             res.cookie('username', profile.username, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-
-    //                             // Set Avatar
-    //                             req.session.avatar = profile.avatar;
-    //                             res.cookie('avatar', profile.avatar, {maxAge: 365 * 24 * 60 * 60 * 1000});
-    //                             res.redirect('/');
-    //                         });
-    //                     });
-    //                 } else {
-    //                     return res.render(
-    //                         'user/signup.jade',
-    //                         { message:  'An error occurred during signing up.'}
-    //                     );
-    //                 }
-    //             });              
-    //         } else {
-    //             return res.render(
-    //                 'user/signup.jade',
-    //                 { message: 'Email address already used. ' + req.body.email }
-    //             );
-    //         }
-    //     });
-    // });
-
+    
     app.get('/signup', function (req, res) {
         res.render("user/signup.jade", {});
     });
