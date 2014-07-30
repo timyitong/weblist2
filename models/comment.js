@@ -12,8 +12,8 @@ var ObjectId = Schema.Types.ObjectId;
  */
 var schema = new Schema({
     parentId : ObjectId,
-    fromUser : {type: ObjectId, ref: 'userProfile'},
-    toUser : {type: ObjectId, ref: 'userProfile'},
+    fromUser : {type: ObjectId, ref: 'user'},
+    toUser : {type: ObjectId, ref: 'user'},
     text : String
 });
 

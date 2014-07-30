@@ -11,8 +11,8 @@ module.exports = function(app) {
         LocalStrategy = require('passport-local').Strategy;
 
     // Our Middlewares
-        var rememberReturnTo = require('../middlewares/rememberReturnTo'),
-            rememberMe = require('../middlewares/rememberMe');
+    var rememberReturnTo = require('../middlewares/rememberReturnTo'),
+        rememberMe = require('../middlewares/rememberMe');
 
     // Constants
     var env = process.env.NODE_ENV || 'development',
