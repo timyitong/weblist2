@@ -1,46 +1,54 @@
-var _ = require('underscore');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var FacebookStrategy = require('passport-facebook').Strategy;
-var TwitterStrategy = require('passport-twitter').Strategy;
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-var models = require('../settings/models');
-var UserModel = models.UserModel;
-var UserProfileModel = models.UserProfileModel;
-var secrets = require('../config/secrets');
+var _ = require('underscore'),
+    bcrypt = require('bcrypt'),
+    ObjectId = require('mongoose').Schema.Types.ObjectId,
+    LocalStrategy = require('passport-local').Strategy,
+    FacebookStrategy = require('passport-facebook').Strategy,
+    TwitterStrategy = require('passport-twitter').Strategy,
+    GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
+    UserModel = require('../settings/models').UserModel,
+    secrets = require('../config/secrets'),
+    stringUtils = require('../utils/stringUtils');
 
+module.exports = function (passport) {
 
-// required for persistent login sessions
-// passport needs ability to serialize and unserialize users out of session
-passport.serializeUser(function(user, done) {
-    done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-    UserModel.findById(id, function(err, user) {
-        done(err, user);
+    /* Required for persistent login sessions
+     * passport needs ability to serialize and unserialize users out of session
+     *
+     */
+    passport.serializeUser(function(user, done) {
+        done(null, user._id);
     });
-});
 
-// Sign in using Email and Password.
+    passport.deserializeUser(function(id, done) {
+        UserModel.findById(id, function(err, user) {
+            done(err, user);
+        });
+    });
 
-passport.use('local-signup', new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password',
-    passReqToCallback: true
-}, function(req, email, password, done) {
-    // asynchronous
-    // UserModel.findOne wont fire unless data is sent back
-    process.nextTick(function() {
+    // Sign in using Email and Password.
+
+    passport.use('local-signup', new LocalStrategy({
+        usernameField: 'email',
+        // This does not mean the stored field, but the frontend field!!!
+        passwordField: 'password',
+        // This field seems to be important
+        passReqToCallback: true
+    }, function(req, email, password, done) {
+        if (!stringUtils.validEmail(email)) {
+            return done(null, false, {message: "Invalid email address"});
+        }
+
         UserModel.findOne({ email: email }, function(err, user) {
             if (err) {
                 return done(err);
             }
+
             if (user) {
-              return done(null, false);
+                return done(null, false);
             }
 
             if (req.user) {
+                // TODO: this part will cause password update bug!
                 var user = req.user;
                 user.email = email;
                 user.password = password;
@@ -51,46 +59,56 @@ passport.use('local-signup', new LocalStrategy({
                     return done(null, user);
                 });
             } else {
-                var newUser = UserModel();
-                newUser.email = email;
-                newUser.password = password;
+                // Create Hash, and then create the user
+                // Async style
+                bcrypt.genSalt(10, function(err, salt) {
+                    bcrypt.hash(password, salt, function(err, hash) {
+                        if (err) {
+                            return done(err);
+                        }
 
-                newUser.save(function(err) {
-                    if (err) {
-                        throw err;
-                    }
-                    return done(null, newUser);
+                        // Extract username from email:
+                        var username = stringUtils.extractNameFromEmail(email);
+
+                        // Create and save new instance
+                        UserModel.create({
+                            email: email,
+                            hash: hash,
+                            username : username
+                        }, function(err, user) {
+                            if (err) {
+                                return done(err);
+                            }
+                            return done(null, user);
+                        });
+                    });
                 });
             }
         });
-    });
-}));
+    }));
 
-passport.use('local-login', new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password',
-    passReqToCallback: true
-}, function(req, email, password, done) {
-    process.nextTick(function() {
+    passport.use('local-login', new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password',
+        // This literally allow the req in the below function
+        passReqToCallback: true
+    }, function(req, email, password, done) {
         UserModel.findOne({ email: email }, function(err, user) {
             if (err) {
                 return done(err);
             }
+
             if (!user) {
                 return done(null, false, { message: 'Email ' + email + ' not found'});
             }
-            if (!user.validPassword(password)) {
-                return done (null, false, { message: 'Password invalid'});
-            }
-            return done(null, user);
+            
+            return user.validPassword(password, done);
         });
-    });
-}));
+    }));
 
-// Sign in with Facebook.
+    // Sign in with Facebook.
 
-passport.use(new FacebookStrategy(secrets.facebook, function(req, accessToken, refreshToken, profile, done) {
-    process.nextTick(function() {
+    passport.use(new FacebookStrategy(secrets.facebook, function(req, accessToken, refreshToken, profile, done) {
         if (req.user) {
             UserModel.findOne({ 'facebook.id': profile.id }, function(err, existingUser) {
                 if (existingUser) {
@@ -135,13 +153,11 @@ passport.use(new FacebookStrategy(secrets.facebook, function(req, accessToken, r
                 });
             });
         }
-    });
-}));
+    }));
 
-// Sign in with Twitter.
+    // Sign in with Twitter.
 
-passport.use(new TwitterStrategy(secrets.twitter, function(req, accessToken, tokenSecret, profile, done) {
-    process.nextTick(function() {
+    passport.use(new TwitterStrategy(secrets.twitter, function(req, accessToken, tokenSecret, profile, done) {
         if (req.user) {
             UserModel.findOne({ 'twitter.id': profile.id }, function(err, existingUser) {
                 if (existingUser) {
@@ -178,13 +194,11 @@ passport.use(new TwitterStrategy(secrets.twitter, function(req, accessToken, tok
                 });
             });
         }
-    });
-}));
+    }));
 
-// Sign in with Google.
+    // Sign in with Google.
 
-passport.use(new GoogleStrategy(secrets.google, function(req, accessToken, refreshToken, profile, done) {
-    process.nextTick(function() {
+    passport.use(new GoogleStrategy(secrets.google, function(req, accessToken, refreshToken, profile, done) {
         if (req.user) {
             UserModel.findOne({ 'google.id': profile.id }, function(err, existingUser) {
                 if (existingUser) {
@@ -222,24 +236,5 @@ passport.use(new GoogleStrategy(secrets.google, function(req, accessToken, refre
                 });
             });
         }
-    });
-}));
-
-// Login Required middleware.
-
-exports.isAuthenticated = function(req, res, next) {
-    if (req.isAuthenticated()) return next();
-    res.redirect('/login');
-};
-
-// Authorization Required middleware.
-
-exports.isAuthorized = function(req, res, next) {
-    var provider = req.path.split('/').slice(-1)[0];
-
-    if (_.find(req.user.tokens, { kind: provider })) {
-        next();
-    } else {
-        res.redirect('/auth/' + provider);
-    }
-};
+    }));
+}

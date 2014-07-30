@@ -1,7 +1,10 @@
 module.exports = function(app) {
-    var passport = app.passport;
+    var passport = require('passport');
+
     /**
      * OAuth sign-in routes.
+     *
+     *  Notice: Local auth is handled in controller/user.js
      */
     app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
     app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), function(req, res) {
@@ -55,16 +58,6 @@ module.exports = function(app) {
            res.redirect('/');
         });
     });
-
-    // locally --------------------------------
-    //app.get('/connect/local', function(req, res) {
-    //    res.render('connect-local.ejs', { message:  });
-    //});
-    //app.post('/connect/local', passport.authenticate('local-signup', {
-    //    successRedirect : '/profile', // redirect to the secure profile section
-    //    failureRedirect : '/connect/local', // redirect back to the signup page if there is an error
-    //    failureFlash : true // allow flash messages
-    //}));
 
     // facebook -------------------------------
 

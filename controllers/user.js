@@ -1,60 +1,33 @@
 module.exports = function(app) {
-    var _ = require('underscore');
-    var models = app.models;
-
-    var Schema = app.mongoose.Schema;
-    var ObjectId = Schema.Types.ObjectId;
-    var bcrypt = require('bcrypt');
-    var passport = app.passport;
+    var _ = require('underscore'),
+        fs = require('node-fs'),
+        im = require('imagemagick'),
+        models = require('../settings/models'),
+        ObjectId = require('mongoose').Schema.Types.ObjectId,
+        passport = require('passport'),
+        bcrypt = require('bcrypt');
 
     app.post('/login', function (req, res, next) {
-        // TODO commented this part out for testing purpose.
-        // req.assert('email', 'Email is not valid').isEmail();
-        // req.assert('password', 'Password cannot be blank').notEmpty();
-
-        var errors = req.validationErrors();
-        if (errors) {
-            return res.send(errors);
-        }
         passport.authenticate('local-login', function(err, user, info) {
             if (err) {
                 return next(err);
             }
 
-            if (user == undefined) {
-                console.log('email not found');
-                return res.render('user/login.jade', {message: 'Email address not found.'});                
-            } else if (app.bcrypt.compareSync(req.body.password, user.password)){
-                req.session.uid = user._id;
-                res.cookie('uid', user._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-                return models.UserProfileModel.findOne({userId: user._id}, function(err, profile) {
-                    if (!err) {
-                        console.log('login success');
-                        
-                        req.session.username = profile.username;
-                        res.cookie('username', profile.username, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-                        req.session.avatar = profile.avatar;
-                        res.cookie('avatar', profile.avatar, {maxAge: 365 * 24 * 60 * 60 * 1000});
-                        return res.redirect('/');
-                    } else {
-                        console.log("profile cannot find.");
-                        return res.send('cannot find profile.');
-                    }
-                })
-            } else {
-                console.log('password does not match');
-                return res.render('user/login.jade', {message: 'Password Not Matched'});
+            if (!user) {
+                return res.render('user/login.jade', {message: 'Login failed.'});    
             }
-            req.logIn(user, function(err) {
+
+            // Prefer lower cases function call: login than logIn
+            req.login(user, function(err) {
+            	console.log('login success.');
                 if (err) {
                     return next(err);
                 }
-                req.session.uid = user._id;
-                res.cookie('uid', user._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
-                console.log(req.session.returnTo);
-                res.redirect(req.session.returnTo || '/');
+                var back = req.session.returnTo;
+                if (back == undefined) {
+                    back = '/';
+                }
+                res.redirect(back);
             });
         })(req, res, next);
     });
@@ -63,22 +36,20 @@ module.exports = function(app) {
         res.render('user/login.jade', {});
     });
 
-    //TODO This should be using post request in future
     app.get('/logout', function (req,res) {
-        req.session.uid = undefined;
-        req.cookies.uid = undefined;
-        res.cookie('uid', undefined);
+        // Call passport request.logout()
+        req.logout();
+        // Redirect page
         res.redirect('/login');
     });
 
     app.get('/user/edit', function (req, res) {
-        if (req.session.uid == undefined) {
+        if (!req.isAuthenticated()) {
             return res.redirect('/login');
         }
 
-        return models.UserModel.findById({_id: req.session.uid}).populate('profile').exec(function (err, user) {
+        return models.UserModel.findById(req.user.id, function (err, user) {
             if (!err) {
-                console.log(user);
                 return res.render('user/edit.jade', {user: user});                        
             } else {
                 return res.redirect('/');
@@ -86,6 +57,7 @@ module.exports = function(app) {
         });
     });
 
+    // TODO
     app.post('/user/edit', function (req, res) {
         if (req.session.uid == undefined) {
             return res.redirect('/login');
@@ -127,10 +99,14 @@ module.exports = function(app) {
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
     app.post('/user/avatar', multipartMiddleware, function (req, res) {
-        if (req.files && req.session.uid != undefined) {
+        if (!req.isAuthenticated()) {
+            res.redirect('/login');
+        }
+
+        if (req.files) {
             var tmpPath = req.files['photo'].path;
             var oldName = req.files['photo'].name;
-            var uid = req.session.uid;
+            var uid = req.user.id;
 
             // Get the file extension
             var extension = oldName.substring(oldName.lastIndexOf('.'), oldName.length);
@@ -139,19 +115,21 @@ module.exports = function(app) {
                 extension: extension
             });
 
+
+            // Maybe we can create a better function and put it inside image model
             // Store image info into db
             imageObj.save(function (err, image) {
                 // Distination Directory
-                var dstDir = app.application_root + '/static/uploads/' + image._id + '/';
+                var dstDir = app.get('application_root') + '/uploads/avatar/' + uid + '/';
                 // mkdir
-                app.fs.mkdirSync(dstDir);
+                fs.mkdirSync(dstDir, 0777, true);
                 _.each(image.formats, function (imageFormat) {
                     var srcPath = tmpPath;
                     var dstPath = dstDir + imageFormat.name + extension;
                     var width = imageFormat.size;
 
                     // Resize the image
-                    app.im.resize({
+                    im.resize({
                         srcPath: srcPath,
                         dstPath: dstPath,
                         width: width,
@@ -159,21 +137,22 @@ module.exports = function(app) {
                     }, function (err, stdout, stderr) {
                         console.log(dstPath);
                         if (!err) {
-                            return console.log("Avatar resized");
+                            // do nothing
                         } else {
-                            console.log(err + "\n message: " + stderr);
+                            // return res.redirect('/user/edit');
                         }
                     });
                 });
-                // Save Avatar to Profile
-                models.UserProfileModel.findOneAndUpdate(
-                      { userId: uid }
+
+                // Save Avatar to User
+                models.UserModel.findOneAndUpdate(
+                      { _id: uid }
                     , { $set: { avatar: { _id: image._id,
                                           extension: image.extension
                                         }
                               }
-                      }, function (err, profile) {
-                        res.redirect('/user/' + profile.userId);
+                      }, function (err, user) {
+                        return res.redirect('/user/' + uid);
                     }
                 );
             });
@@ -183,84 +162,56 @@ module.exports = function(app) {
     });
 
     app.get('/user', function (req, res) {
-        return res.redirect('/user/' + req.session.uid);
+        return res.redirect('/user/' + req.user.id);
     });
 
     app.get('/user/:id', function (req, res) {
         var uid = req.params.id;
         if (uid == undefined) {
-            if (req.session.uid == undefined) {
-                return res.redirect('/login');
+            if (req.isAuthenticated()) {
+                uid = req.user.id;
             } else{
-                uid = req.session.uid;
+                return res.redirect('/login');
             }
         }
-
-        models.UserProfileModel.findOne({userId: uid}, function (err, profile) {
+        console.log(uid);
+        models.UserModel.findById(uid, function (err, user) {
             if (!err) {
-                return res.render('user/view.jade', {profile: profile, canEdit: uid == req.session.uid});
+                console.log(user);
+                var profile = user.getProfile();
+                profile.canEdit = req.user && req.user.id == uid;
+                return res.render('user/view.jade', {profile: profile});
             } else {
                 return res.redirect('/');
             }
         });
     });
 
-    app.post('/signup', function (req, res) {
-
-        return models.UserModel.findOne({ email: req.body.email }, function(err, user) {
+    /* Nested structure should be used if we want to control 
+     * details like redirect to the place before logging
+     */
+    app.post('/signup', function(req, res, next) {
+        passport.authenticate('local-signup', function (err, user, info) {
             if (err) {
-                return res.send('Login failed caused by database. ' + err);
+                return next(err); 
             }
-            if (user == undefined) {
-                var newUser = new models.UserModel({
-                    email: req.body.email,
-                    password: req.body.password
-                });
-
-                // Save Basic user information 
-                newUser.save(function (err) {
-                    if (!err) {
-                        req.session.uid = newUser._id;
-                        res.cookie('uid', newUser._id, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-                        // Build user profile
-                        var atPosition = newUser.email.indexOf('@');
-                        atPosition = atPosition == -1 ? newUser.email.length : atPosition;
-                        var profile = new models.UserProfileModel({
-                            username: newUser.email.substring(0, atPosition),
-                            userId: newUser._id
-                        });
-                        // Save user profile 
-                        return profile.save(function (err, profile) {
-                            newUser.profile = profile._id;
-                            // Save user's ref to profile
-                            newUser.save(function (err) {
-                                req.session.username = profile.username;
-                                res.cookie('username', profile.username, {maxAge: 365 * 24 * 60 * 60 * 1000});
-
-
-                                // Set Avatar
-                                req.session.avatar = profile.avatar;
-                                res.cookie('avatar', profile.avatar, {maxAge: 365 * 24 * 60 * 60 * 1000});
-                                res.redirect('/');
-                            });
-                        });
-                    } else {
-                        return res.render(
-                            'user/signup.jade',
-                            { message:  'An error occurred during signing up.'}
-                        );
-                    }
-                });              
-            } else {
-                return res.render(
-                    'user/signup.jade',
-                    { message: 'Email address already used. ' + req.body.email }
-                );
+            if (!user) {
+                return res.redirect('/signup'); 
             }
-        });
+            
+            // req.logIn or req.login is equivalent, lowercase preferred :D
+            req.logIn(user, function(err) {
+                            console.log(user);
+                if (err) { return next(err); }
+                var back = res.locals.returnTo;
+                if (!back) {
+                    back = '/';
+                }
+                res.redirect(back);
+            });
+        })(req, res, next); // important to put this <- if we need this nested structure
     });
-
+    
     app.get('/signup', function (req, res) {
         res.render("user/signup.jade", {});
     });

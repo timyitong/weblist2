@@ -1,53 +1,61 @@
-// Init Application
-var express = require('express');
-var app = express();
+/* Weblist2
+ *
+ * @author: Haochen Wei, Yitong Zhou
+ */
 
-// root dir name of the repo
-app.application_root = __dirname;
+// Import Modules And Create Express Instance
+var autoIncrement = require('mongoose-auto-increment'),
+    express = require('express'),
+    jade = require('jade'),
+    mongoose = require('mongoose'),
+    app = express();
 
-app.bcrypt = require('bcrypt');
 
-app.im = require('imagemagick');
-app.fs = require('fs');
-app.passport = require('passport');
-app.path = require('path');
-app.mongoose = require('mongoose');
-app.moment = require('moment')
+/* All Application Settings (which you use app.set)
+ * 
+ * BTW, to access these settings in views, use settings./foo/ in view templates.
+ * Use app.locals.foo = bar, if foo is not suitable under 'settings' object
+ */
 
-// Moment setip
-app.moment.relativeTime={
-    future: "in %s",
-    past: "%s ago",
-    s:"1 second",
-    ss: "%d seconds",
-    m: "1 minute",
-    mm: "%d minutes",
-    h: "1 hour",
-    hh: "%d hours",
-    d: "1 day",
-    dd: "%d days",
-    M: "1 month",
-    MM: "%d months",
-    y: "1 year",
-    yy: "%d years"
-}
+// Site Title
+app.set('title', 'BlaBla');
 
-// Include constants file
-var constants = require("./utils/constants");
+// Application Root Directory
+app.set('application_root', __dirname);
 
-// Include config file
-var config = require('./settings/config')(app, express);
+// Set view template root
+app.set('views', app.get('application_root') + '/views');
+// Set .jade as default template extension
+app.set('view engine','jade');
+// Set jade as the template engine for .jade
+app.engine('jade', jade.__express);
+app.set('view options', {layout:  true});
+/****************************************/
 
-// configure passport
-require('./auth/passport');
 
-// Include models file
-app.models = require("./settings/models");
+/* ALL APPLICATION MIDDLEWARE CONFIGS (mostly if you use app.use()) 
+ * GOES TO ./settings/config.js
+ */
+var config = require('./settings/config');
+config(app);
+/****************************************/
 
-// Include the controller file
-require('./settings/routes')(app);
 
-// Start server
+/* Database Settings
+ *
+ */
+// DB Config
+mongoose.connect('mongodb://localhost:27017/weblist2');
+// Init Schema Table for mongoose-auto-increment
+// autoIncrement.initialize(connection);
+/****************************************/
+
+
+/* Prepare to START the server! */
 var port = process.env.PORT || 3000;
 app.listen(port);
 console.log("Listening on port " + port);
+
+// TODO: move this configure passport
+// require('./auth/passport');
+/****************************************/

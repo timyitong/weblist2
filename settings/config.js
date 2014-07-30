@@ -1,74 +1,94 @@
-module.exports = function(app, express) {
-    var config=this;
-    var expressValidator = require('express-validator');
+module.exports = function(app) {
+    // Import Modules
+    var bodyParser = require('body-parser'),
+        errorhandler = require('errorhandler'),
+        express = require('express'),
+        passport = require('passport'),
+        session = require('express-session'),
+        RedisStore = require('connect-redis')(session),
+        methodOverride = require('method-override'),
+        morgan = require('morgan'),
+        LocalStrategy = require('passport-local').Strategy;
 
-    app.configure(function () {
-        // view engine
-        app.set('views', app.application_root + '/views');
-        app.set('view engine','jade');
-        app.set('view options', {
-            layout:  true
-        });
+    // Our Middlewares
+        var rememberReturnTo = require('../middlewares/rememberReturnTo'),
+            rememberMe = require('../middlewares/rememberMe');
 
-        // express
-        var methodOverride = require("method-override");
-        app.use(methodOverride());
+    // Constants
+    var env = process.env.NODE_ENV || 'development',
+        application_root = app.get('application_root');
 
-        app.use(app.passport.initialize());
-        app.use(app.passport.session());
-        
-        app.use(express.cookieParser("csecstring"));
-        app.use(express.session({
-            secret: 'topsecret',
-            store: new express.session.MemoryStore
-        }));
+    /* Setting Middlewares via app.use()
+     *
+     * ORDER IS VERY IMPORTANT!
+     */
 
-        app.use(function(req, res, next) {
-            // Make user object available in templates.
-            res.locals.user = req.user;
-            next();
-        });
-        // remember original destination before login.
-        app.use(function(req, res, next) {
-            var path = req.path.split('/')[1];
-            if (/auth|login|logout|signup|fonts|favicon|css|javascript/i.test(path)) {
-                return next();
-            }
-            req.session.returnTo = req.path;
-            next();
-        });
-        app.use(express.static(app.path.join(app.application_root,
-                                             "static")));
-        app.use(express.errorHandler({
-            dumpExceptions:  true,
-            showStack:  true
-        }));
+    // HTTP REQUEST logger
+    if (env != 'development') {
+        app.use(morgan('combined'));
+    }
 
-        app.use(express.urlencoded());
-        app.use(express.json());
-        app.use(expressValidator());
-        app.use(function (req, res, next) {
-            if (req.cookies.uid != undefined && req.cookies.uid != 'undefined') {
-                req.session.uid = req.cookies.uid;
-            }
-            if (req.session.uid == undefined) {
-                req.session.authenticated = false;
-            } else {
-                req.session.authenticated = true;
-            }
-            res.locals.session = req.session;
-            next();
-        });
+    // Body Parser, making req.body getting json data in specific content types:
+        // parse application/x-www-form-urlencoded
+    app.use(bodyParser.urlencoded({ extended: false }));
+        // parse application/json
+    app.use(bodyParser.json());
 
-        // router
-        app.use(app.router);
+    // Session, maxAge: 1 week, use Redis for storage
+    var sessionStore = new session.MemoryStore;
+    if (env != 'development') {
+      sessionStore = new RedisStore(
+        {url: 'redis://127.0.0.1:6379/weblist2_session_storage'}
+      );
+    }
+    app.use(session({   secret: "olalalala", 
+                        store: sessionStore,
+                        resave: true,
+                        saveUninitialized: true
+                    }));
+
+    /* Method override, making you see PUT/DELETE when the client
+     * does not support it.
+     *
+     * TODO: tentative putting here. Should it before bodyParser or after?
+     */
+    // Override with different headers; last one takes precedence.
+    app.use(methodOverride('X-HTTP-Method'))          // Microsoft
+    app.use(methodOverride('X-HTTP-Method-Override')) // Google/GData
+    app.use(methodOverride('X-Method-Override'))      // IBM
+
+    // remember original destination before login.
+    app.use(rememberReturnTo);
+    app.use(rememberMe);
+    
+    require('../auth/passport')(passport);
+    // Set up Passport
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    // Static Server (GET /static/style.css, GET /static/favicon.ico)
+    app.use(express.static(application_root + '/static'));
+    app.use(express.static(application_root + '/uploads'));
+
+    // Bind req.user to res.locals which is accessible from view templates
+    // TODO: is there any way neater to do it?
+    app.use(function(req, res, next){
+      res.locals.user = req.user;
+      res.locals.authenticated = ! req.user;
+      next();
     });
 
-    // DB Config
-    var connection = app.mongoose.connect('mongodb://localhost:27017/weblist2');
-    // Init schema table for mongoose-auto-increment
-    var autoIncrement = require('mongoose-auto-increment');
-    autoIncrement.initialize(connection);
+    ///////
+        // Something we can try:c
+        // app.post('*', requireAuthentification, loadUser);
+    ///////
 
-    return config;
+    // IMPORTANT! Bind all major routers!
+    var mainRouter = require('./routes');
+    mainRouter(app);
+
+    // Error Handler, after everything is done:
+    if (env == "development") {
+        app.use(errorhandler());
+    }
 }

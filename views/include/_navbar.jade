@@ -2,7 +2,7 @@ div.container-full
     nav.navbar(role="navigation", style="height:30px; background: #fff;").border-bottom
         // Brand
         div.navbar-header
-            a.navbar-brand(href="/") HuchiHuchi
+            a.navbar-brand(href="/") HuchiHuchi #{returnTo}
         div.collapse.navbar-collapse
             // Left menu
             //- ul.nav.navbar-nav
@@ -18,13 +18,15 @@ div.container-full
             //-         a(href="#") 神馬
             // Right menu
             ul.nav.navbar-nav.navbar-right
-                - if (session.uid)
+                - if (user)
                     li
                         a(href="/user", style="padding-top: 10px;height: 50px;")
-                            if (session.avatar)
-                                img(height="30", src="/uploads/#{session.avatar._id}/mini#{session.avatar.extension}")
+                            if (user.avatar && user.avatar._id)
+                                img(height="30", src="/avatar/#{user.id}/mini#{user.avatar.extension}")
+                            else
+                                img(height="30", src="/images/default-avatar.jpg")
                     li.dropdown
-                        a.dropdown-toggle(href="#", data-toggle="dropdown") #{session.username}
+                        a.dropdown-toggle(href="#", data-toggle="dropdown") #{user.username}
                             b.caret
                         ul.dropdown-menu
                             li

@@ -3,10 +3,12 @@ block content
     div
         div.row
             div.col-sm-1.user-pic
-                if (profile.avatar)
-                    img(src="/uploads/#{profile.avatar._id}/small#{profile.avatar.extension}")
+                if (profile.avatar && profile.avatar._id)
+                    img(src="/avatar/#{profile.userid}/small#{profile.avatar.extension}")
+                else
+                    img(src="/images/default-avatar.jpg")
             div.col-sm-10
                 span.h3 #{profile.username}
-            - if (canEdit)
+            - if (profile.canEdit)
                 div.col-sm-1
                     a(href="/user/edit") edit

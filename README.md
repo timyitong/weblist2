@@ -15,3 +15,6 @@ brew install ImageMagick
 Development Environment
 Install jade plugin for sublime text
 http://stackoverflow.com/questions/7666977/syntax-highlighting-for-jade-in-sublime-text-2
+
+How to install Redis:
+http://redis.io/topics/quickstart

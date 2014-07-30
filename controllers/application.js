@@ -1,6 +1,8 @@
 module.exports = function(app) {
-    var ObjectId = app.mongoose.Types.ObjectId;
-    var models = app.models;
+    var mongoose = require('mongoose'),
+        Schema = mongoose.Schema,
+        ObjectId = Schema.Types.ObjectId,
+        models = require('../settings/models');
 
     //index:
     app.get('/', function (req, res) {
