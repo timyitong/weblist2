@@ -84,7 +84,7 @@ module.exports = function(app) {
         }
 
         if (req.body.username != undefined) {
-            models.UserProfileModel.findOneAndUpdate(
+            models.UserModel.findOneAndUpdate(
                   { userId: req.session.uid }
                 , { $set: { username: req.body.username
                           }
