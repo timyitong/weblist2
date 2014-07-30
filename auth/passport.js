@@ -109,138 +109,132 @@ module.exports = function (passport) {
     // Sign in with Facebook.
 
     passport.use(new FacebookStrategy(secrets.facebook, function(req, accessToken, refreshToken, profile, done) {
-        process.nextTick(function() {
-            if (req.user) {
-                UserModel.findOne({ 'facebook.id': profile.id }, function(err, existingUser) {
-                    if (existingUser) {
+        if (req.user) {
+            UserModel.findOne({ 'facebook.id': profile.id }, function(err, existingUser) {
+                if (existingUser) {
+                    done(err);
+                } else {
+                    UserModel.findById(req.user.id, function(err, user) {
+                        user.facebook.id = profile.id;
+                        user.facebook.accessToken = accessToken;
+                        user.facebook.name = profile.displayName;
+                        user.facebook.email = profile._json.email;
+                        user.facebook.firstName = profile.name.givenName;
+                        user.facebook.lastName = profile.name.familyName;
+                        user.save(function(err) {
+                            done(err, user);
+                        });
+                    });
+                }
+            });
+        } else {
+            UserModel.findOne({ 'facebook.id': profile.id }, function(err, existingUser) {
+                if (err) {
+                    return done(err);
+                }
+                if (existingUser) {
+                    return done(null, existingUser);
+                }
+                UserModel.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
+                    if (existingEmailUser) {
                         done(err);
                     } else {
-                        UserModel.findById(req.user.id, function(err, user) {
-                            user.facebook.id = profile.id;
-                            user.facebook.accessToken = accessToken;
-                            user.facebook.name = profile.displayName;
-                            user.facebook.email = profile._json.email;
-                            user.facebook.firstName = profile.name.givenName;
-                            user.facebook.lastName = profile.name.familyName;
-                            user.save(function(err) {
-                                done(err, user);
-                            });
+                        var user = new UserModel();
+                        user.facebook.id = profile.id;
+                        user.facebook.accessToken = accessToken;
+                        user.facebook.name = profile.displayName;
+                        user.facebook.email = profile._json.email;
+                        user.facebook.firstName = profile.name.givenName;
+                        user.facebook.lastName = profile.name.familyName;
+                        user.save(function(err) {
+                            done(err, user);
                         });
                     }
                 });
-            } else {
-                UserModel.findOne({ 'facebook.id': profile.id }, function(err, existingUser) {
-                    if (err) {
-                        return done(err);
-                    }
-                    if (existingUser) {
-                        return done(null, existingUser);
-                    }
-                    UserModel.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
-                        if (existingEmailUser) {
-                            done(err);
-                        } else {
-                            var user = new UserModel();
-                            user.facebook.id = profile.id;
-                            user.facebook.accessToken = accessToken;
-                            user.facebook.name = profile.displayName;
-                            user.facebook.email = profile._json.email;
-                            user.facebook.firstName = profile.name.givenName;
-                            user.facebook.lastName = profile.name.familyName;
-                            user.save(function(err) {
-                                done(err, user);
-                            });
-                        }
-                    });
-                });
-            }
-        });
+            });
+        }
     }));
 
     // Sign in with Twitter.
 
     passport.use(new TwitterStrategy(secrets.twitter, function(req, accessToken, tokenSecret, profile, done) {
-        process.nextTick(function() {
-            if (req.user) {
-                UserModel.findOne({ 'twitter.id': profile.id }, function(err, existingUser) {
-                    if (existingUser) {
-                        done(err);
-                    } else {
-                        User.findById(req.user.id, function(err, user) {
-                            user.twitter.id = profile.id;
-                            user.twitter.email = profile.username + "@twitter.com";
-                            user.twitter.accessTokens = accessToken;
-                            user.twitter.tokenSecret = tokenSecret;
-                            user.twitter.username = profile.username;
-                            user.twitter.displayName = profile.displayName;
-                            user.save(function(err) {
-                                done(err, user);
-                            });
+        if (req.user) {
+            UserModel.findOne({ 'twitter.id': profile.id }, function(err, existingUser) {
+                if (existingUser) {
+                    done(err);
+                } else {
+                    User.findById(req.user.id, function(err, user) {
+                        user.twitter.id = profile.id;
+                        user.twitter.email = profile.username + "@twitter.com";
+                        user.twitter.accessTokens = accessToken;
+                        user.twitter.tokenSecret = tokenSecret;
+                        user.twitter.username = profile.username;
+                        user.twitter.displayName = profile.displayName;
+                        user.save(function(err) {
+                            done(err, user);
                         });
-                    }
-                });
-
-            } else {
-                UserModel.findOne({ 'twitter.id': profile.id }, function(err, existingUser) {
-                    if (existingUser) {
-                        return done(null, existingUser);
-                    }
-                    var user = new UserModel();
-                    user.twitter.id = profile.id;
-                    user.twitter.email = profile.username + "@twitter.com";
-                    user.twitter.accessTokens = accessToken;
-                    user.twitter.tokenSecret = tokenSecret;
-                    user.twitter.username = profile.username;
-                    user.twitter.displayName = profile.displayName;
-                    user.save(function(err) {
-                        done(err, user);
                     });
+                }
+            });
+
+        } else {
+            UserModel.findOne({ 'twitter.id': profile.id }, function(err, existingUser) {
+                if (existingUser) {
+                    return done(null, existingUser);
+                }
+                var user = new UserModel();
+                user.twitter.id = profile.id;
+                user.twitter.email = profile.username + "@twitter.com";
+                user.twitter.accessTokens = accessToken;
+                user.twitter.tokenSecret = tokenSecret;
+                user.twitter.username = profile.username;
+                user.twitter.displayName = profile.displayName;
+                user.save(function(err) {
+                    done(err, user);
                 });
-            }
-        });
+            });
+        }
     }));
 
     // Sign in with Google.
 
     passport.use(new GoogleStrategy(secrets.google, function(req, accessToken, refreshToken, profile, done) {
-        process.nextTick(function() {
-            if (req.user) {
-                UserModel.findOne({ 'google.id': profile.id }, function(err, existingUser) {
-                    if (existingUser) {
+        if (req.user) {
+            UserModel.findOne({ 'google.id': profile.id }, function(err, existingUser) {
+                if (existingUser) {
+                    done(err);
+                } else {
+                    UserModel.findById(req.user.id, function(err, user) {
+                        user.google.id = profile.id;
+                        user.google.accessToken = accessToken;
+                        user.google.name = profile.displayName;
+                        user.google.email = profile._json.email;
+                        user.save(function(err) {
+                            done(err, user);
+                        });
+                    });
+                }
+            });
+        } else {
+            UserModel.findOne({ 'google.id': profile.id }, function(err, existingUser) {
+                if (existingUser) {
+                    return done(null, existingUser);
+                }
+                UserModel.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
+                    if (existingEmailUser) {
                         done(err);
                     } else {
-                        UserModel.findById(req.user.id, function(err, user) {
-                            user.google.id = profile.id;
-                            user.google.accessToken = accessToken;
-                            user.google.name = profile.displayName;
-                            user.google.email = profile._json.email;
-                            user.save(function(err) {
-                                done(err, user);
-                            });
+                        var user = new UserModel();
+                        user.google.id = profile.id;
+                        user.google.accessToken = accessToken;
+                        user.google.name = profile.displayName;
+                        user.google.email = profile._json.email;
+                        user.save(function(err) {
+                            done(err, user);
                         });
                     }
                 });
-            } else {
-                UserModel.findOne({ 'google.id': profile.id }, function(err, existingUser) {
-                    if (existingUser) {
-                        return done(null, existingUser);
-                    }
-                    UserModel.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
-                        if (existingEmailUser) {
-                            done(err);
-                        } else {
-                            var user = new UserModel();
-                            user.google.id = profile.id;
-                            user.google.accessToken = accessToken;
-                            user.google.name = profile.displayName;
-                            user.google.email = profile._json.email;
-                            user.save(function(err) {
-                                done(err, user);
-                            });
-                        }
-                    });
-                });
-            }
-        });
+            });
+        }
     }));
 }
