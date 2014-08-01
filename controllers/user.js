@@ -1,11 +1,152 @@
 module.exports = function(app) {
     var _ = require('underscore'),
+        async = require('async'),
         fs = require('node-fs'),
         im = require('imagemagick'),
         models = require('../settings/models'),
         ObjectId = require('mongoose').Schema.Types.ObjectId,
         passport = require('passport'),
-        bcrypt = require('bcrypt');
+        bcrypt = require('bcrypt'),
+        crypto = require('crypto'),
+        validator = require('validator'),
+        secrets = require('../config/secrets'),
+        nodemailer = require('nodemailer');
+
+    var PasswordResetRequestModel = models.PasswordResetRequestModel;
+    var UserModel = models.UserModel;
+
+    /**
+     * GET /forget
+     * Forgot password page.
+     */
+    app.get('/forgot', function(req, res, next) {
+        if (req.isAuthenticated()) {
+            return res.redirect('/');
+        }
+        res.render('user/forgot.jade');
+    });
+
+    /**
+     * POST /forgot
+     * Create a random token, then send user an email with a reset link.
+     */
+    app.post('/forgot', function(req, res, next) {
+        if (!validator.isEmail(req.body.email)) {
+            return res.redirect('/forgot');
+        };
+        async.waterfall([
+            // Get token
+            function(done) {
+                crypto.randomBytes(16, function(err, buf) {
+                    var token = buf.toString('hex');
+                    done(err, token);
+                });
+            },
+            // Find user
+            function(token, done) {
+                UserModel.findOne({ email: req.body.email.toLowerCase() }, function(err, user) {
+                    if (!user) {
+                        return res.redirect('/forgot');
+                    }
+                    done(err, token, user);
+                });
+            },
+            // 
+            function(token, user, done) {
+                var passwordResetRequest = new PasswordResetRequestModel();
+                passwordResetRequest.userId = user._id;
+                passwordResetRequest.hash = crypto.createHash('sha256').update(token).digest('hex');
+
+                passwordResetRequest.save(function(err) {
+                    done(err, token, user);
+                });
+            },
+            // Send email
+            function(token, user, done) {
+                // TODO in the future, we have to use SMTP transport instead of direct transport.
+                var transporter = nodemailer.createTransport(secrets.mailClient.service);
+                var mailOptions = {
+                    to: user.email,
+                    from: secrets.mailClient.email,
+                    subject: 'Reset your password',
+                    text: 'http://localhost:3000/reset/' + token
+                };
+                transporter.sendMail(mailOptions, function(err) {
+                    done(err, 'done');
+                });
+            }
+        ], function(err) {
+            if (err) {
+                return next(err);
+            }
+            res.redirect('/forgot');
+        });
+    });
+
+    app.get('/reset/:token', function(req, res) {
+        var tokenHash = crypto.createHash('sha256').update(req.params.token).digest('hex');
+        PasswordResetRequestModel.findOne({ hash: tokenHash }, function(err, passwordResetRequest) {
+            if (!passwordResetRequest) {
+                return res.redirect('/forgot');
+            }
+            // TODO check if token has expired already.
+            res.render('user/reset.jade');
+        });
+    });
+
+    app.post('/reset/:token', function(req, res) {
+        async.waterfall([
+            function(done) {
+                if (req.body.password != req.body.confirm) {
+                    return res.redirect('back');
+                }
+                var tokenHash = crypto.createHash('sha256').update(req.params.token).digest('hex');
+                PasswordResetRequestModel.findOne({ hash: tokenHash }, function(err, passwordResetRequest) {
+                    if (!passwordResetRequest) {
+                        return res.redirect('/forgot');
+                    }
+                    // TODO check if token has expired already.
+                    done(err, passwordResetRequest);
+                });
+            },
+            function(passwordResetRequest, done) {
+                UserModel.findOne({ _id: passwordResetRequest.userId }, function(err, user) {
+                    if (!user) {
+                        return res.redirect('back');
+                    }
+                    bcrypt.genSalt(10, function(err, salt) {
+                        bcrypt.hash(req.body.password, salt, function(err, hash) {
+                            user.hash = hash;
+
+                            console.log(hash);
+                            console.log(user.password);
+
+                            user.save(function(err) {
+
+                                req.login(user, function(err) {
+                                    done(err, user);
+                                });
+                            });
+                        });
+                    });
+                });
+            },
+            function(user, done) {
+                var smtpTransport = nodemailer.createTransport(secrets.mailClient.service);
+                var mailOptions = {
+                    to: user.email,
+                    from: secrets.mailClient.email,
+                    subject: 'Your password has been changed',
+                    text: 'Password for ' + user.email + ' has just been changed.'
+                };
+                smtpTransport.sendMail(mailOptions, function(err) {
+                    done(err);
+                });
+            }
+        ], function(err) {
+            res.redirect('/');
+        });
+    });
 
     app.post('/login', function (req, res, next) {
         passport.authenticate('local-login', function(err, user, info) {
@@ -48,7 +189,7 @@ module.exports = function(app) {
             return res.redirect('/login');
         }
 
-        return models.UserModel.findById(req.user.id, function (err, user) {
+        return UserModel.findById(req.user.id, function (err, user) {
             if (!err) {
                 return res.render('user/edit.jade', {user: user});                        
             } else {
@@ -72,7 +213,7 @@ module.exports = function(app) {
                 var hashedPassword = bcrypt.hashSync(password, salt);
                 password = hashedPassword;
 
-                app.models.UserModel.findOneAndUpdate({_id: req.session.uid}
+                UserModel.findOneAndUpdate({_id: req.session.uid}
                     , { $set: {password: password} }
                     , function (err, user) {
                         // TODO a potential bug: not sending any response
@@ -84,7 +225,7 @@ module.exports = function(app) {
         }
 
         if (req.body.username != undefined) {
-            models.UserModel.findOneAndUpdate(
+            UserModel.findOneAndUpdate(
                   { _id: req.user.id }
                 , { $set: { username: req.body.username
                           }
@@ -145,7 +286,7 @@ module.exports = function(app) {
                 });
 
                 // Save Avatar to User
-                models.UserModel.findOneAndUpdate(
+                UserModel.findOneAndUpdate(
                       { _id: uid }
                     , { $set: { avatar: { _id: image._id,
                                           extension: image.extension
@@ -175,7 +316,7 @@ module.exports = function(app) {
             }
         }
         console.log(uid);
-        models.UserModel.findById(uid, function (err, user) {
+        UserModel.findById(uid, function (err, user) {
             if (!err) {
                 console.log(user);
                 var profile = user.getProfile();

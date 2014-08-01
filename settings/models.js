@@ -46,5 +46,6 @@ module.exports = models = {
     CityModel: loadModel('city'),
     RegionModel: loadModel('region'),
     CountryModel: loadModel('country'),
-    ZipCodeModel: loadModel('zipCode')
+    ZipCodeModel: loadModel('zipCode'),
+    PasswordResetRequestModel: loadModel('passwordResetRequest')
 };
