@@ -118,11 +118,16 @@ module.exports = function(app) {
                             user.hash = hash;
                             user.save(function(err) {
                                 req.login(user, function(err) {
-                                    done(err, user);
+                                    done(err, passwordResetRequest, user);
                                 });
                             });
                         });
                     });
+                });
+            },
+            function(passwordResetRequest, user, done) {
+                PasswordResetRequestModel.findByIdAndRemove({ _id: passwordResetRequest._id }, function(err, docs) {
+                    done(err, user);
                 });
             },
             function(user, done) {
