@@ -56,7 +56,6 @@ module.exports = function(app) {
                 var passwordResetRequest = new PasswordResetRequestModel();
                 passwordResetRequest.userId = user._id;
                 passwordResetRequest.hash = crypto.createHash('sha256').update(token).digest('hex');
-
                 passwordResetRequest.save(function(err) {
                     done(err, token, user);
                 });
@@ -86,10 +85,10 @@ module.exports = function(app) {
     app.get('/reset/:token', function(req, res) {
         var tokenHash = crypto.createHash('sha256').update(req.params.token).digest('hex');
         PasswordResetRequestModel.findOne({ hash: tokenHash }, function(err, passwordResetRequest) {
+            // request not made or token expired.
             if (!passwordResetRequest) {
                 return res.redirect('/forgot');
             }
-            // TODO check if token has expired already.
             res.render('user/reset.jade');
         });
     });
@@ -102,10 +101,10 @@ module.exports = function(app) {
                 }
                 var tokenHash = crypto.createHash('sha256').update(req.params.token).digest('hex');
                 PasswordResetRequestModel.findOne({ hash: tokenHash }, function(err, passwordResetRequest) {
+                    // request not made or token expired.
                     if (!passwordResetRequest) {
                         return res.redirect('/forgot');
                     }
-                    // TODO check if token has expired already.
                     done(err, passwordResetRequest);
                 });
             },
@@ -117,12 +116,7 @@ module.exports = function(app) {
                     bcrypt.genSalt(10, function(err, salt) {
                         bcrypt.hash(req.body.password, salt, function(err, hash) {
                             user.hash = hash;
-
-                            console.log(hash);
-                            console.log(user.password);
-
                             user.save(function(err) {
-
                                 req.login(user, function(err) {
                                     done(err, user);
                                 });
