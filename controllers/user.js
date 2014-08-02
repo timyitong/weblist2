@@ -35,28 +35,34 @@ module.exports = function(app) {
             return res.redirect('/forgot');
         };
         async.waterfall([
-            // Get token
-            function(done) {
-                crypto.randomBytes(16, function(err, buf) {
-                    var token = buf.toString('hex');
-                    done(err, token);
-                });
-            },
             // Find user
-            function(token, done) {
+            function(done) {
                 UserModel.findOne({ email: req.body.email.toLowerCase() }, function(err, user) {
                     if (!user) {
                         return res.redirect('/forgot');
                     }
+                    done(err, user);
+                });
+            },
+            // Get token
+            function(user, done) {
+                crypto.randomBytes(16, function(err, buf) {
+                    var token = buf.toString('hex');
                     done(err, token, user);
                 });
             },
-            // 
+            // Store reset token.
             function(token, user, done) {
                 var passwordResetRequest = new PasswordResetRequestModel();
                 passwordResetRequest.userId = user._id;
                 passwordResetRequest.hash = crypto.createHash('sha256').update(token).digest('hex');
                 passwordResetRequest.save(function(err) {
+                    done(err, passwordResetRequest, token, user);
+                });
+            },
+            // Remove all the other reset token for the user.
+            function(passwordResetRequest, token, user, done) {
+                PasswordResetRequestModel.remove({userId: user._id, _id: { '$ne': passwordResetRequest._id}}, function(err) {
                     done(err, token, user);
                 });
             },
