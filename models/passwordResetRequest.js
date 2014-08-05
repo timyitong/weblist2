@@ -2,9 +2,9 @@
  * PasswordRestRequestModel
  * Module dependencies.
  */
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    ObjectId = Schema.Types.ObjectId;
 
 /**
  * Define Schema

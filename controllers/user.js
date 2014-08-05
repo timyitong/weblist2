@@ -16,10 +16,10 @@ module.exports = function(app) {
     var UserModel = models.UserModel;
 
     /**
-     * GET /forget
+     * GET user/password/forgot
      * Forgot password page.
      */
-    app.get('/forgot', function(req, res, next) {
+    app.get('/user/password/forgot', function(req, res, next) {
         if (req.isAuthenticated()) {
             return res.redirect('/');
         }
@@ -27,19 +27,19 @@ module.exports = function(app) {
     });
 
     /**
-     * POST /forgot
+     * POST user/password/forgot
      * Create a random token, then send user an email with a reset link.
      */
-    app.post('/forgot', function(req, res, next) {
+    app.post('/user/password/forgot', function(req, res, next) {
         if (!validator.isEmail(req.body.email)) {
-            return res.redirect('/forgot');
+            return res.redirect('/user/password/forgot');
         };
         async.waterfall([
             // Find user
             function(done) {
                 UserModel.findOne({ email: req.body.email.toLowerCase() }, function(err, user) {
                     if (!user) {
-                        return res.redirect('/forgot');
+                        return res.redirect('/user/password/forgot');
                     }
                     done(err, user);
                 });
@@ -74,7 +74,7 @@ module.exports = function(app) {
                     to: user.email,
                     from: secrets.mailClient.email,
                     subject: 'Reset your password',
-                    text: 'http://localhost:3000/reset/' + token
+                    text: 'http://localhost:3000/user/password/reset/' + token
                 };
                 transporter.sendMail(mailOptions, function(err) {
                     done(err, 'done');
@@ -84,22 +84,22 @@ module.exports = function(app) {
             if (err) {
                 return next(err);
             }
-            res.redirect('/forgot');
+            res.redirect('/user/password/forgot');
         });
     });
 
-    app.get('/reset/:token', function(req, res) {
+    app.get('/user/password/reset/:token', function(req, res) {
         var tokenHash = crypto.createHash('sha256').update(req.params.token).digest('hex');
         PasswordResetRequestModel.findOne({ hash: tokenHash }, function(err, passwordResetRequest) {
             // request not made or token expired.
             if (!passwordResetRequest) {
-                return res.redirect('/forgot');
+                return res.redirect('/user/password/forgot');
             }
             res.render('user/reset.jade');
         });
     });
 
-    app.post('/reset/:token', function(req, res) {
+    app.post('/user/password/reset/:token', function(req, res) {
         async.waterfall([
             function(done) {
                 if (req.body.password != req.body.confirm) {
@@ -109,7 +109,7 @@ module.exports = function(app) {
                 PasswordResetRequestModel.findOne({ hash: tokenHash }, function(err, passwordResetRequest) {
                     // request not made or token expired.
                     if (!passwordResetRequest) {
-                        return res.redirect('/forgot');
+                        return res.redirect('/user/password/forgot');
                     }
                     done(err, passwordResetRequest);
                 });
