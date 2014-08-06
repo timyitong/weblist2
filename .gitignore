@@ -31,3 +31,6 @@ static/uploads/*
 uploads/*
 
 .DS_Store
+
+# secrets
+config/secrets.js
