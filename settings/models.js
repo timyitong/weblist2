@@ -12,7 +12,7 @@ function loadModel(modelName, options) {
     var schema = require(MODEL_PATH + modelName);
 
     // 1. Global Shared Plugins (all models need them)
-    schema.plugin(autoTimeFields);
+    schema.plugin(autoTimeFields, options);
 
     /* 2. Group Shared Plugins (some models need them)
      * 
@@ -46,5 +46,6 @@ module.exports = models = {
     CityModel: loadModel('city'),
     RegionModel: loadModel('region'),
     CountryModel: loadModel('country'),
-    ZipCodeModel: loadModel('zipCode')
+    ZipCodeModel: loadModel('zipCode'),
+    PasswordResetRequestModel: loadModel('passwordResetRequest', { expires: '1d' })
 };
