@@ -1,69 +1,52 @@
 module.exports = function(app) {
-    var mongoose = require('mongoose'),
+    var async = require('async'),
+        mongoose = require('mongoose'),
         Schema = mongoose.Schema,
-        ObjectId = Schema.Types.ObjectId;
+        ObjectId = Schema.Types.ObjectId,
+        models = require('../settings/models');
 
-    /**
-     * Get page to write new message.
-     */
-    app.get('/messages/new', function(req, res) {
-
-    });
-
-    /**
-     * Save/update a message.
-     */
-    app.post('/messages/save/:id', function(req, res) {
-
-    });
+    var MessageModel = models.MessageModel;
+    var NotificationModel = models.NotificationModel;
+    var UserModel = models.UserModel;
 
     /**
      * Send a new message.
      */
-    app.post('/messages/send/:id', function(req, res) {
+    app.post('/message', function (req, res) {
+        if (!req.isAuthenticated()) {
+            return res.redirect('/login');
+        }
+        async.waterfall([
+            // Save new message.
+            function (done) {
+                var message = new MessageModel({
+                    messageType: 'userMessage',
+                    body: req.body.message,
+                    sender: ObjectId(req.user.id),
+                    recipient: ObjectId(req.body.recipientId)
+                });
+                message.save(function (err, newMessage) {
+                    done(err, newMessage);
+                });
+            },
+            // Save new notification.
+            function (newMessage, done) {
+                var notification = new NotificationModel({
+                    notificationType: 'userMessage',
+                    recipient: ObjectId(req.body.recipientId),
+                    contentId: newMessage._id
+                });
 
-    });
-
-    /**
-     * Show messages in inbox
-     */
-    app.get('/messages/inbox', function(req, res) {
-
-    });
-
-    /**
-     * Show messages from specific user in inbox.
-     */
-    app.get('/messages/inbox/:userId', function(req, res) {
-
-    });
-
-    /**
-     * Show message drafts.
-     */
-    app.get('/messages/drafts', function(req, res) {
-
-    });
-
-    /**
-     * Show a message draft.
-     */
-    app.get('/messages/drafts/:id', function(req, res) {
-
-    });
-
-    /**
-     * Show sent messages.
-     */
-    app.get('/messages/sent', function(req, res) {
-
-    });
-
-    /**
-     * Show sent messages to specific user.
-     */
-    app.get('/messages/sent/:userId', function(req, res) {
-
+                notification.save(function (err) {
+                    done(err, 'done');
+                });
+            }
+        ], function (err) {
+            if (err) {
+                return next(err);
+            }
+            res.send(400, { message: 'Failed to send message.'});
+        });
     });
 
     return this;

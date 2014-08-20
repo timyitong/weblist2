@@ -1,5 +1,5 @@
 /**
- * Message Model
+ * Notification Model
  */
 
 /**
@@ -10,33 +10,29 @@ var mongoose = require('mongoose'),
     ObjectId = Schema.Types.ObjectId;
 
 var types = ['userMessage', 'siteMessage'];
+
 /**
  * Define Schema
  */
 var schema = new Schema({
-    body: {
-        required: true,
-        type: String
-    },
-    messageType: {
+    notificationType: {
         required: true,
         type: String,
         enum: types
     },
-    // sender can be null if the message is from site.
-    sender : {
-        type: ObjectId,
-        ref: 'user'
-    },
-    recipient : {
+    contentId: {
         required: true,
-        type: ObjectId,
-        ref: 'user'
+        type: ObjectId
     },
     read: {
         required: true,
         type: Boolean,
-        default: false,
+        default: false
+    },
+    recipient: {
+        required: true,
+        type: ObjectId,
+        ref: 'user'
     }
 });
 
