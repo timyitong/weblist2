@@ -47,5 +47,7 @@ module.exports = models = {
     RegionModel: loadModel('region'),
     CountryModel: loadModel('country'),
     ZipCodeModel: loadModel('zipCode'),
-    PasswordResetRequestModel: loadModel('passwordResetRequest', { expires: '1d' })
+    PasswordResetRequestModel: loadModel('passwordResetRequest', { expires: '1d' }),
+    MessageModel: loadModel('message'),
+    NotificationModel: loadModel('notification')
 };

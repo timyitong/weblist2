@@ -33,7 +33,7 @@ module.exports = function(app) {
     app.post('/user/password/forgot', function(req, res, next) {
         if (!validator.isEmail(req.body.email)) {
             return res.redirect('/user/password/forgot');
-        };
+        }
         async.waterfall([
             // Find user
             function(done) {
